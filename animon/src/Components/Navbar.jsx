@@ -11,6 +11,9 @@ import {
   Clock,
 } from "lucide-react";
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import Library from "./Library";
+import MainPage from "./MainPage";
 export default function Navbar() {
   const [activeTab, setActiveTab] = useState("home");
   return (
@@ -26,8 +29,9 @@ export default function Navbar() {
             </h1>
           </div>
           <nav className="flex items-center gap-6">
-            <button
+            <Link
               onClick={() => setActiveTab("home")}
+              to="/"
               className={`px-4 py-2 rounded-lg transition-colors ${
                 activeTab === "home"
                   ? "bg-purple-600 text-white"
@@ -35,9 +39,10 @@ export default function Navbar() {
               }`}
             >
               Home
-            </button>
-            <button
+            </Link>
+            <Link
               onClick={() => setActiveTab("library")}
+              to="/mylibrary"
               className={`px-4 py-2 rounded-lg transition-colors ${
                 activeTab === "library"
                   ? "bg-purple-600 text-white"
@@ -45,9 +50,10 @@ export default function Navbar() {
               }`}
             >
               My Library
-            </button>
-            <button
+            </Link>
+            <Link
               onClick={() => setActiveTab("search")}
+              to="/search"
               className={`px-4 py-2 rounded-lg transition-colors ${
                 activeTab === "search"
                   ? "bg-purple-600 text-white"
@@ -55,7 +61,7 @@ export default function Navbar() {
               }`}
             >
               Search
-            </button>
+            </Link>
           </nav>
         </div>
       </div>

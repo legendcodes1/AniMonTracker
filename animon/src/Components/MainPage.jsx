@@ -91,7 +91,7 @@ export default function MainPage() {
     }
   };
 
-  const itemsPerSlide = 3;
+  const itemsPerSlide = 4;
   const totalSlides = Math.ceil(newReleases.length / itemsPerSlide);
 
   const nextSlide = () => {
@@ -244,7 +244,7 @@ export default function MainPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <div className="min-h-screen bg-transparent">
       <Navbar />
       <div className="max-w-7xl mx-auto p-6">
         <Welcome />
@@ -255,7 +255,7 @@ export default function MainPage() {
               <h2 className="text-3xl font-bold mb-2 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
                 New Releases
               </h2>
-              <p className="text-slate-400">
+              <p className="text-slate-400 text-lg">
                 Discover the latest anime and manga
               </p>
             </div>

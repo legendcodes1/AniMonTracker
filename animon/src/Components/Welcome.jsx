@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function Welcome() {
   return (
     <div className="relative mt-12 bg-gradient-to-r from-purple-900/20 to-pink-900/20 rounded-3xl p-8 border border-purple-500/20 overflow-hidden max-w-5xl mx-auto">
@@ -17,12 +19,13 @@ export default function Welcome() {
           >
             Discover New Titles
           </button>
-          <button
+          <Link
             onClick={() => setActiveTab("library")}
+            to="/mylibrary"
             className="px-6 py-3 bg-slate-800/50 hover:bg-slate-700/50 text-white rounded-xl font-medium transition-all duration-300 border border-slate-600 hover:border-purple-500"
           >
             View My Library
-          </button>
+          </Link>
         </div>
       </div>
     </div>
