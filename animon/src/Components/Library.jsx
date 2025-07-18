@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import React from "react";
 import Navbar from "./Navbar";
 import MangaModal from "./MangaModel";
@@ -11,8 +11,8 @@ import {
   Book,
   Tv,
 } from "lucide-react";
+
 export default function Library() {
-  const [items, setItems] = useState([]);
   const [collection, setCollection] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [filter, setFilter] = useState("all");
@@ -20,85 +20,53 @@ export default function Library() {
   const closeModal = () => setModalIsOpen(false);
   const openModal = () => setModalIsOpen(true);
 
-  const addToCollection = (newItem) => {
-    setCollection([...collection, newItem]);
-    closeModal();
-  };
+  // 🔥 Fetch mangas from backend and transform
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Fetch mangas
+        const mangasRes = await fetch("http://localhost:3000/mangas");
+        const mangasData = await mangasRes.json();
+        const transformedMangas = mangasData.map((manga) => ({
+          id: `manga-${manga.id}`, // ensure unique ids across types
+          title: manga.Name || manga.title || "Untitled",
+          type: "manga",
+          rating: manga.rating || 8.5,
+          image:
+            manga.Image ||
+            "https://via.placeholder.com/300x400?text=Manga+Cover",
+          status: manga.Status || "ongoing",
+          description: manga.description || "No description available.",
+          chapters: manga.Chapters || 0,
+          genre: manga.Genre || "Unknown",
+        }));
 
-  const current = [
-    {
-      id: 1,
-      title: "Demon Slayer: Infinity Castle",
-      type: "anime",
-      rating: 9.2,
-      image:
-        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop",
-      status: "ongoing",
-      description: "The most anticipated arc of Demon Slayer finally animated.",
-      episodes: 12,
-      genre: "Action, Supernatural",
-    },
-    {
-      id: 2,
-      title: "Chainsaw Man: Part 2",
-      type: "manga",
-      rating: 8.9,
-      image:
-        "https://images.unsplash.com/photo-1612198188060-c7c2a3b66eae?w=300&h=400&fit=crop",
-      status: "ongoing",
-      description: "Denji returns in this highly anticipated sequel.",
-      chapters: 140,
-      genre: "Action, Horror",
-    },
-    {
-      id: 3,
-      title: "Jujutsu Kaisen: Season 3",
-      type: "anime",
-      rating: 9.1,
-      image:
-        "https://images.unsplash.com/photo-1606918801925-e2c914c4b503?w=300&h=400&fit=crop",
-      status: "upcoming",
-      description: "The Culling Game arc brings new challenges.",
-      episodes: 24,
-      genre: "Action, Supernatural",
-    },
-    {
-      id: 4,
-      title: "Attack on Titan: Final Season",
-      type: "anime",
-      rating: 9.5,
-      image:
-        "https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=300&h=400&fit=crop",
-      status: "completed",
-      description: "The epic conclusion to the legendary series.",
-      episodes: 87,
-      genre: "Action, Drama",
-    },
-    {
-      id: 5,
-      title: "One Piece: Gear 5",
-      type: "manga",
-      rating: 9.8,
-      image:
-        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop",
-      status: "ongoing",
-      description: "Luffy's most powerful transformation yet.",
-      chapters: 1100,
-      genre: "Adventure, Comedy",
-    },
-    {
-      id: 6,
-      title: "My Hero Academia: Final War",
-      type: "anime",
-      rating: 8.7,
-      image:
-        "https://images.unsplash.com/photo-1606918801925-e2c914c4b503?w=300&h=400&fit=crop",
-      status: "ongoing",
-      description: "Heroes face their greatest challenge.",
-      episodes: 25,
-      genre: "Action, School",
-    },
-  ];
+        // Fetch animes
+        const animesRes = await fetch("http://localhost:3000/animes");
+        const animesData = await animesRes.json();
+        const transformedAnimes = animesData.map((anime) => ({
+          id: `anime-${anime.id}`,
+          title: anime.Name || anime.title || "Untitled",
+          type: "anime",
+          rating: anime.rating || 8.5,
+          image:
+            anime.Image ||
+            "https://via.placeholder.com/300x400?text=Anime+Cover",
+          status: anime.Status || "ongoing",
+          description: anime.description || "No description available.",
+          episodes: anime.Episodes || 0,
+          genre: anime.Genre || "Unknown",
+        }));
+
+        // Combine into one array
+        setCollection([...transformedMangas, ...transformedAnimes]);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const getStatusIcon = (status) => {
     switch (status) {
@@ -127,17 +95,19 @@ export default function Library() {
   };
 
   const filteredItems =
-    filter === "all" ? current : current.filter((item) => item.type === filter);
+    filter === "all"
+      ? collection
+      : collection.filter((item) => item.type === filter);
 
   return (
-    <div className="min-h-screen ">
+    <div className="min-h-screen">
       <Navbar />
 
       {/* Header Section */}
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-8 animate-fadeIn">
           <h1 className="text-4xl font-bold text-white mb-2 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-            My Collection
+            Your Library
           </h1>
           <p className="text-slate-400 text-lg">
             Track your favorite anime and manga
@@ -155,7 +125,7 @@ export default function Library() {
                   : "bg-slate-700 text-slate-300 hover:bg-slate-600"
               }`}
             >
-              All ({current.length})
+              All ({collection.length})
             </button>
             <button
               onClick={() => setFilter("anime")}
@@ -166,7 +136,8 @@ export default function Library() {
               }`}
             >
               <Tv className="w-4 h-4" />
-              Anime ({current.filter((item) => item.type === "anime").length})
+              Anime ({collection.filter((item) => item.type === "anime").length}
+              )
             </button>
             <button
               onClick={() => setFilter("manga")}
@@ -177,7 +148,8 @@ export default function Library() {
               }`}
             >
               <Book className="w-4 h-4" />
-              Manga ({current.filter((item) => item.type === "manga").length})
+              Manga ({collection.filter((item) => item.type === "manga").length}
+              )
             </button>
           </div>
 
@@ -274,6 +246,7 @@ export default function Library() {
           </div>
         )}
       </div>
+
       <MangaModal
         title=""
         chapters=""

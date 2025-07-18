@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 export default function MangaModal({ isOpen, handleClose, onAddItem }) {
   const [formData, setFormData] = useState({
@@ -19,14 +19,64 @@ export default function MangaModal({ isOpen, handleClose, onAddItem }) {
     }));
   };
 
-  const handleSubmit = () => {
-    if (formData.title.trim()) {
-      const newItem = {
-        id: Date.now(),
-        ...formData,
-        rating: parseFloat(formData.rating) || 0,
-      };
-      onAddItem(newItem);
+  // const handleSubmit = () => {
+  //   if (formData.title.trim()) {
+  //     const newItem = {
+  //       id: Date.now(),
+  //       ...formData,
+  //       rating: parseFloat(formData.rating) || 0,
+  //     };
+  //     onAddItem(newItem);
+  //     setFormData({
+  //       title: "",
+  //       chapters: "",
+  //       genre: "",
+  //       image: "",
+  //       status: "ongoing",
+  //       type: "manga",
+  //       rating: "",
+  //     });
+  //     handleClose();
+  //   }
+  // };
+
+  const handleSubmit = async () => {
+    try {
+      let endpoint = "";
+      let mappedData = {};
+
+      if (formData.type === "anime") {
+        endpoint = "http://localhost:3000/animes";
+        mappedData = {
+          Name: formData.title,
+          Episodes: parseInt(formData.chapters) || null, // using chapters input for anime episodes here
+          Genre: formData.genre,
+          Image: formData.image,
+          Status: formData.status,
+        };
+      } else if (formData.type === "manga") {
+        endpoint = "http://localhost:3000/mangas";
+        mappedData = {
+          Name: formData.title,
+          Chapters: parseInt(formData.chapters) || null,
+          Genre: formData.genre,
+          Image: formData.image,
+          Status: formData.status,
+        };
+      }
+
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(mappedData),
+      });
+
+      if (!res.ok) throw new Error("Failed to add item");
+
+      const data = await res.json();
+      console.log("Successfully added:", data);
+
+      // reset form
       setFormData({
         title: "",
         chapters: "",
@@ -36,7 +86,10 @@ export default function MangaModal({ isOpen, handleClose, onAddItem }) {
         type: "manga",
         rating: "",
       });
+
       handleClose();
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -148,7 +201,7 @@ export default function MangaModal({ isOpen, handleClose, onAddItem }) {
           <div className="flex gap-3 pt-4">
             <button
               type="button"
-              onClick={handleSubmit}
+              onClick={() => handleSubmit(formData, formData.type)}
               className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded transition-colors"
             >
               Add Item
