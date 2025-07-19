@@ -62,6 +62,7 @@ export default function Navbar() {
             >
               Search
             </Link>
+            <Link className="text-slate-400 hover:text-white">Sign out</Link>
           </nav>
         </div>
       </div>

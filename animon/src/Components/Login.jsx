@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Particle = ({ delay = 0, color = "#ff6b6b", duration = 6 }) => {
   const [position, setPosition] = useState({ x: Math.random() * 100, y: 100 });
@@ -110,28 +111,6 @@ const FormGroup = ({
   );
 };
 
-const SocialButton = ({ icon, provider, onClick }) => (
-  <button
-    onClick={onClick}
-    className="
-      flex-1 px-3 py-3 
-      bg-white bg-opacity-5 
-      border border-white border-opacity-10 
-      rounded-xl 
-      text-gray-400 text-sm
-      backdrop-blur-sm
-      transition-all duration-300 ease-in-out
-      hover:bg-white hover:bg-opacity-10 
-      hover:-translate-y-0.5
-      focus:outline-none
-      flex items-center justify-center gap-2
-    "
-  >
-    <span>{icon}</span>
-    {provider}
-  </button>
-);
-
 const SubmitButton = ({ children, loading = false, onClick }) => (
   <button
     onClick={onClick}
@@ -180,13 +159,11 @@ const TabButton = ({ active, onClick, children }) => (
     `}
   >
     <span className="relative z-10">{children}</span>
-    {!active && (
-      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-0 -translate-x-full hover:translate-x-full transition-transform duration-500" />
-    )}
   </button>
 );
 
 export default function Login() {
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -196,6 +173,27 @@ export default function Login() {
     confirmPassword: "",
   });
 
+  useEffect(() => {
+    const checkLogin = async () => {
+      const token = localStorage.getItem("token");
+      if (token) {
+        try {
+          const res = await fetch("http://localhost:3000/users/me", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (!res.ok) throw new Error("Invalid token");
+          const user = await res.json();
+          console.log("Already logged in as:", user);
+          navigate("/dashboard");
+        } catch (err) {
+          console.error("Token invalid or expired:", err);
+          localStorage.removeItem("token");
+        }
+      }
+    };
+    checkLogin();
+  }, [navigate]);
+
   const handleInputChange = (field) => (e) => {
     setFormData((prev) => ({ ...prev, [field]: e.target.value }));
   };
@@ -204,23 +202,35 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      const endpoint = isLogin
+        ? "http://localhost:3000/users"
+        : "http://localhost:3000/users";
 
-    console.log("Form submitted:", formData);
-    setLoading(false);
-  };
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
-  const handleSocialLogin = (provider) => {
-    console.log(`${provider} login clicked`);
+      if (!res.ok) throw new Error("Login/signup failed");
+
+      const data = await res.json();
+      console.log("Response:", data);
+
+      localStorage.setItem("token", data.token);
+      navigate("/");
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-blue-900">
-      {/* Particle System */}
       <ParticleSystem />
 
-      {/* Keyframes for animations */}
       <style jsx>{`
         @keyframes float {
           0%,
@@ -239,7 +249,6 @@ export default function Login() {
         }
       `}</style>
 
-      {/* Main Container */}
       <div className="relative z-10 w-full max-w-md mx-4">
         <div
           className="
@@ -254,7 +263,6 @@ export default function Login() {
           hover:shadow-3xl hover:shadow-black/40
         "
         >
-          {/* Logo Section */}
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold mb-2 bg-gradient-to-r from-red-400 to-teal-400 bg-clip-text text-transparent">
               Animon
@@ -264,7 +272,6 @@ export default function Login() {
             </p>
           </div>
 
-          {/* Form Toggle */}
           <div
             className="
             flex 
@@ -283,8 +290,7 @@ export default function Login() {
             </TabButton>
           </div>
 
-          {/* Forms */}
-          <div>
+          <form onSubmit={handleSubmit}>
             {!isLogin && (
               <FormGroup
                 label="Username"
@@ -295,33 +301,21 @@ export default function Login() {
               />
             )}
 
-            {!isLogin && (
-              <FormGroup
-                label="Email"
-                type="email"
-                placeholder="Enter your email address"
-                value={formData.email}
-                onChange={handleInputChange("email")}
-                required
-              />
-            )}
-
-            {isLogin && (
-              <FormGroup
-                label="Email or Username"
-                placeholder="Enter your email or username"
-                value={formData.email}
-                onChange={handleInputChange("email")}
-                required
-              />
-            )}
+            <FormGroup
+              label={isLogin ? "Email or Username" : "Email"}
+              type="email"
+              placeholder={
+                isLogin ? "Enter your email or username" : "Enter your email"
+              }
+              value={formData.email}
+              onChange={handleInputChange("email")}
+              required
+            />
 
             <FormGroup
               label="Password"
               type="password"
-              placeholder={
-                isLogin ? "Enter your password" : "Create a secure password"
-              }
+              placeholder="Enter your password"
               value={formData.password}
               onChange={handleInputChange("password")}
               required
@@ -338,83 +332,10 @@ export default function Login() {
               />
             )}
 
-            {!isLogin && (
-              <div className="flex items-center gap-2 mb-6">
-                <input
-                  type="checkbox"
-                  id="terms"
-                  required
-                  className="w-4 h-4"
-                />
-                <label htmlFor="terms" className="text-sm text-gray-400">
-                  I agree to the{" "}
-                  <a
-                    href="#"
-                    className="text-teal-400 hover:text-red-400 transition-colors"
-                  >
-                    Terms of Service
-                  </a>
-                </label>
-              </div>
-            )}
-
-            <SubmitButton loading={loading} onClick={handleSubmit}>
+            <SubmitButton loading={loading}>
               {isLogin ? "Sign In" : "Create Account"}
             </SubmitButton>
-          </div>
-
-          {/* Divider */}
-          <div className="relative text-center my-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gradient-to-r from-transparent via-white via-opacity-20 to-transparent"></div>
-            </div>
-            <span className="relative bg-gradient-to-r from-slate-900 to-slate-800 px-4 text-sm text-gray-400">
-              or continue with
-            </span>
-          </div>
-
-          {/* Social Login */}
-          <div className="flex gap-4 mb-6">
-            <SocialButton
-              icon="🔗"
-              provider="Google"
-              onClick={() => handleSocialLogin("Google")}
-            />
-            <SocialButton
-              icon="🐱"
-              provider="GitHub"
-              onClick={() => handleSocialLogin("GitHub")}
-            />
-          </div>
-
-          {/* Footer Links */}
-          {isLogin && (
-            <div className="text-center mb-4">
-              <a
-                href="#"
-                className="text-teal-400 hover:text-red-400 text-sm transition-colors"
-              >
-                Forgot your password?
-              </a>
-            </div>
-          )}
-
-          {/* Feature Hint */}
-          <div
-            className="
-            bg-red-500 bg-opacity-10 
-            border border-red-500 border-opacity-20 
-            rounded-lg 
-            p-3 
-            text-center 
-            text-red-400 
-            text-sm
-          "
-          >
-            {isLogin
-              ? "💡 Start tracking your favorite anime and manga today!"
-              : "🎌 Join thousands of anime & manga enthusiasts!"}
-          </div>
+          </form>
         </div>
       </div>
     </div>

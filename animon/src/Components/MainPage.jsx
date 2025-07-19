@@ -29,8 +29,8 @@ export default function MainPage() {
       type: "anime",
       rating: 9.2,
       image:
-        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop",
-      status: "ongoing",
+        "https://cdn.noitatnemucod.net/thumbnail/300x400/100/30df93feaa422101659e14d0a2a2f582.jpg",
+      status: "Completed",
       description: "The most anticipated arc of Demon Slayer finally animated.",
     },
     {
@@ -39,18 +39,18 @@ export default function MainPage() {
       type: "manga",
       rating: 8.9,
       image:
-        "https://images.unsplash.com/photo-1612198188060-c7c2a3b66eae?w=300&h=400&fit=crop",
-      status: "ongoing",
+        "https://cdn.noitatnemucod.net/thumbnail/300x400/100/b3da1326e07269ddd8d73475c5dabf2c.jpg",
+      status: "Completed",
       description: "Denji returns in this highly anticipated sequel.",
     },
     {
       id: 3,
-      title: "Jujutsu Kaisen: Season 3",
+      title: "Jujutsu Kaisen: Season 2",
       type: "anime",
       rating: 9.1,
       image:
-        "https://images.unsplash.com/photo-1606918801925-e2c914c4b503?w=300&h=400&fit=crop",
-      status: "upcoming",
+        "https://cdn.noitatnemucod.net/thumbnail/300x400/100/b51f863b05f30576cf9d85fa9b911bb5.png",
+      status: "Completed",
       description: "The Culling Game arc brings new challenges.",
     },
     {
@@ -59,7 +59,7 @@ export default function MainPage() {
       type: "anime",
       rating: 9.5,
       image:
-        "https://images.unsplash.com/photo-1594736797933-d0401ba2fe65?w=300&h=400&fit=crop",
+        "https://cdn.noitatnemucod.net/thumbnail/300x400/100/98b21bfbd9fa3d49ec80ba8fe75ed5cd.jpg",
       status: "completed",
       description: "The epic conclusion to the legendary series.",
     },
@@ -85,11 +85,11 @@ export default function MainPage() {
     },
   ];
 
-  const addToLibrary = (item) => {
-    if (!library.find((libItem) => libItem.id === item.id)) {
-      setLibrary([...library, item]);
-    }
-  };
+  // const addToLibrary = (item) => {
+  //   if (!library.find((libItem) => libItem.id === item.id)) {
+  //     setLibrary([...library, item]);
+  //   }
+  // };
 
   const itemsPerSlide = 4;
   const totalSlides = Math.ceil(newReleases.length / itemsPerSlide);
@@ -159,7 +159,7 @@ export default function MainPage() {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              addToLibrary(item);
+              // addToLibrary(item);
             }}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
               library.find((libItem) => libItem.id === item.id)

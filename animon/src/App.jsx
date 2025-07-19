@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import Login from "./Components/Login";
 import MainPage from "./Components/MainPage";
 import Library from "./Components/Library"; // ✅ create/import this component
-import Search from "./Components/Search"; // ✅ create/import this component
+import SearchComponent from "./Components/Search";
 import "./App.css";
 
 function App() {
@@ -26,7 +26,8 @@ function App() {
         <Routes>
           <Route path="/" element={<MainPage />} /> {/* Home */}
           <Route path="/mylibrary" element={<Library />} />
-          <Route path="/search" element={<Search />} />
+          <Route path="/search" element={<SearchComponent />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </div>
     </div>
