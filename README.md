@@ -52,14 +52,12 @@ I've included Postman screenshots testing all core routes:
 ✅ Delete manga
 
 Insert Postman screenshots here
+<img width="1913" height="1031" alt="Users get" src="https://github.com/user-attachments/assets/8108bebe-9d55-4b33-92b1-703be0643fbc" />
+<img width="1918" height="1029" alt="Post Animes" src="https://github.com/user-attachments/assets/966fa0c8-b5eb-4058-858d-248d55a0a27a" />
 
 🛠 How to Run Locally
 🔹 Prerequisites
 Node.js (v18+)
-
-Supabase project (free tier)
-
-Vercel account (optional for deploy)
 
 🔸 Backend Setup
 bash
@@ -85,15 +83,6 @@ cd frontend
 npm install
 npm run dev
 App should now be running at http://localhost:5173
-
-🔸 Deploy (Vercel)
-Push frontend to GitHub
-
-Connect repo to vercel.com
-
-Set frontend environment variables (VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY)
-
-Deploy 🎉
 
 ✍️ What I Learned or applied
 This project helped me:
