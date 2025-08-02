@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "./Navbar";
-import MangaModal from "./MangaModel";
+import LibraryModal from "./MangaModel";
 import {
   Plus,
   Star,
@@ -16,56 +15,81 @@ export default function Library() {
   const [collection, setCollection] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [filter, setFilter] = useState("all");
+  const [editItem, setEditItem] = useState(null);
 
-  const closeModal = () => setModalIsOpen(false);
+  const closeModal = () => {
+    setModalIsOpen(false);
+    setEditItem(null); // Reset edit state
+  };
+
   const openModal = () => setModalIsOpen(true);
 
-  // 🔥 Fetch mangas from backend and transform
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch mangas
-        const mangasRes = await fetch("http://localhost:3000/mangas");
-        const mangasData = await mangasRes.json();
-        const transformedMangas = mangasData.map((manga) => ({
-          id: `manga-${manga.id}`, // ensure unique ids across types
-          title: manga.Name || manga.title || "Untitled",
-          type: "manga",
-          rating: manga.rating || 8.5,
-          image:
-            manga.Image ||
-            "https://via.placeholder.com/300x400?text=Manga+Cover",
-          status: manga.Status || "ongoing",
-          description: manga.description || "No description available.",
-          chapters: manga.Chapters || 0,
-          genre: manga.Genre || "Unknown",
-        }));
+  const fetchCollection = async () => {
+    try {
+      const token = localStorage.getItem("token"); // get JWT token from localStorage (adjust if stored elsewhere)
 
-        // Fetch animes
-        const animesRes = await fetch("http://localhost:3000/animes");
-        const animesData = await animesRes.json();
-        const transformedAnimes = animesData.map((anime) => ({
-          id: `anime-${anime.id}`,
-          title: anime.Name || anime.title || "Untitled",
-          type: "anime",
-          rating: anime.rating || 8.5,
-          image:
-            anime.Image ||
-            "https://via.placeholder.com/300x400?text=Anime+Cover",
-          status: anime.Status || "ongoing",
-          description: anime.description || "No description available.",
-          episodes: anime.Episodes || 0,
-          genre: anime.Genre || "Unknown",
-        }));
-
-        // Combine into one array
-        setCollection([...transformedMangas, ...transformedAnimes]);
-      } catch (err) {
-        console.error(err);
+      const mangasRes = await fetch("http://localhost:3000/mangas", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!mangasRes.ok) {
+        throw new Error(`Failed to fetch mangas: ${mangasRes.statusText}`);
       }
-    };
+      const mangasData = await mangasRes.json();
 
-    fetchData();
+      // Ensure mangasData is an array before mapping
+      const transformedMangas = Array.isArray(mangasData)
+        ? mangasData.map((manga) => ({
+            id: `manga-${manga.id}`,
+            title: manga.Name || "Untitled",
+            type: "manga",
+            rating: manga.Rating || 8.5,
+            image:
+              manga.Image ||
+              "https://via.placeholder.com/300x400?text=Manga+Cover",
+            status: manga.Status || "ongoing",
+            description: manga.description || "No description available.",
+            chapters: manga.Chapters || 0,
+            genre: manga.Genre || "Unknown",
+          }))
+        : [];
+
+      const animesRes = await fetch("http://localhost:3000/animes", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!animesRes.ok) {
+        throw new Error(`Failed to fetch animes: ${animesRes.statusText}`);
+      }
+      const animesData = await animesRes.json();
+
+      const transformedAnimes = Array.isArray(animesData)
+        ? animesData.map((anime) => ({
+            id: `anime-${anime.id}`,
+            title: anime.Name || "Untitled",
+            type: "anime",
+            rating: anime.Rating || 8.5,
+            image:
+              anime.Image ||
+              "https://via.placeholder.com/300x400?text=Anime+Cover",
+            status: anime.Status || "ongoing",
+            description: anime.description || "No description available.",
+            episodes: anime.Episodes || 0,
+            genre: anime.Genre || "Unknown",
+          }))
+        : [];
+
+      setCollection([...transformedMangas, ...transformedAnimes]);
+    } catch (err) {
+      console.error("Error fetching collection:", err);
+      setCollection([]); // clear collection on error or show a message if you prefer
+    }
+  };
+
+  useEffect(() => {
+    fetchCollection();
   }, []);
 
   const getStatusIcon = (status) => {
@@ -103,7 +127,6 @@ export default function Library() {
     <div className="min-h-screen">
       <Navbar />
 
-      {/* Header Section */}
       <div className="container mx-auto px-4 py-8">
         <div className="text-center mb-8 animate-fadeIn">
           <h1 className="text-4xl font-bold text-white mb-2 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
@@ -114,12 +137,12 @@ export default function Library() {
           </p>
         </div>
 
-        {/* Filter and Add Button */}
+        {/* Filter & Add Button */}
         <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
           <div className="flex gap-2">
             <button
               onClick={() => setFilter("all")}
-              className={`px-4 py-2 rounded-lg transition-all duration-300 ${
+              className={`px-4 py-2 rounded-lg ${
                 filter === "all"
                   ? "bg-purple-600 text-white shadow-lg shadow-purple-500/25"
                   : "bg-slate-700 text-slate-300 hover:bg-slate-600"
@@ -129,7 +152,7 @@ export default function Library() {
             </button>
             <button
               onClick={() => setFilter("anime")}
-              className={`px-4 py-2 rounded-lg transition-all duration-300 flex items-center gap-2 ${
+              className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
                 filter === "anime"
                   ? "bg-blue-600 text-white shadow-lg shadow-blue-500/25"
                   : "bg-slate-700 text-slate-300 hover:bg-slate-600"
@@ -141,7 +164,7 @@ export default function Library() {
             </button>
             <button
               onClick={() => setFilter("manga")}
-              className={`px-4 py-2 rounded-lg transition-all duration-300 flex items-center gap-2 ${
+              className={`px-4 py-2 rounded-lg flex items-center gap-2 ${
                 filter === "manga"
                   ? "bg-pink-600 text-white shadow-lg shadow-pink-500/25"
                   : "bg-slate-700 text-slate-300 hover:bg-slate-600"
@@ -154,7 +177,10 @@ export default function Library() {
           </div>
 
           <button
-            onClick={openModal}
+            onClick={() => {
+              setEditItem(null);
+              openModal();
+            }}
             className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-purple-500/25 flex items-center gap-2"
           >
             <Plus className="w-5 h-5" />
@@ -188,6 +214,10 @@ export default function Library() {
                 key={item.id}
                 className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 hover:bg-slate-800/70 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/10 border border-slate-700/50 group animate-slideUp"
                 style={{ animationDelay: `${index * 0.1}s` }}
+                onClick={() => {
+                  setEditItem(item);
+                  openModal();
+                }}
               >
                 <div className="flex gap-4 mb-4">
                   <div className="relative overflow-hidden rounded-lg">
@@ -247,14 +277,13 @@ export default function Library() {
         )}
       </div>
 
-      <MangaModal
-        title=""
-        chapters=""
-        genre=""
-        image=""
-        status=""
+      {/* Add/Edit Modal */}
+      <LibraryModal
         isOpen={modalIsOpen}
-        handleClose={closeModal}
+        onClose={closeModal}
+        data={editItem}
+        type={editItem?.type} // "anime" or "manga"
+        onRefresh={fetchCollection}
       />
     </div>
   );

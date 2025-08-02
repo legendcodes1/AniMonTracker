@@ -204,24 +204,33 @@ export default function Login() {
 
     try {
       const endpoint = isLogin
-        ? "http://localhost:3000/users"
-        : "http://localhost:3000/users";
+        ? "http://localhost:3000/users/login"
+        : "http://localhost:3000/users/register";
+
+      const payload = isLogin
+        ? { email: formData.email, password: formData.password }
+        : {
+            username: formData.username,
+            email: formData.email,
+            password: formData.password,
+          };
 
       const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(payload),
       });
 
-      if (!res.ok) throw new Error("Login/signup failed");
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || "Auth failed");
+      }
 
       const data = await res.json();
-      console.log("Response:", data);
-
       localStorage.setItem("token", data.token);
       navigate("/");
     } catch (err) {
-      console.error(err);
+      console.error("Auth error:", err);
     } finally {
       setLoading(false);
     }

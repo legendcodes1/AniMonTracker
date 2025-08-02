@@ -13,14 +13,13 @@ export default function Welcome() {
           here!
         </p>
         <div className="flex gap-4">
-          <button
-            onClick={() => setActiveTab("search")}
+          <Link
+            to="/search"
             className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl font-medium transition-all duration-300 transform hover:scale-105"
           >
             Discover New Titles
-          </button>
+          </Link>
           <Link
-            onClick={() => setActiveTab("library")}
             to="/mylibrary"
             className="px-6 py-3 bg-slate-800/50 hover:bg-slate-700/50 text-white rounded-xl font-medium transition-all duration-300 border border-slate-600 hover:border-purple-500"
           >

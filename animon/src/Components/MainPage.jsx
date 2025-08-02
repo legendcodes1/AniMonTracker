@@ -69,17 +69,17 @@ export default function MainPage() {
       type: "manga",
       rating: 9.8,
       image:
-        "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=300&h=400&fit=crop",
+        "https://cdn.noitatnemucod.net/thumbnail/300x400/100/bcd84731a3eda4f4a306250769675065.jpg",
       status: "ongoing",
       description: "Luffy's most powerful transformation yet.",
     },
     {
       id: 6,
-      title: "My Hero Academia: Final War",
+      title: "My Hero Academia: Season 7",
       type: "anime",
       rating: 8.7,
       image:
-        "https://images.unsplash.com/photo-1606918801925-e2c914c4b503?w=300&h=400&fit=crop",
+        "https://cdn.noitatnemucod.net/thumbnail/300x400/100/af4938d7388aad3438e443e74b02531e.jpg",
       status: "ongoing",
       description: "Heroes face their greatest challenge.",
     },

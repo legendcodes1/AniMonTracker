@@ -11,11 +11,17 @@ import {
   Clock,
 } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import Library from "./Library";
-import MainPage from "./MainPage";
+import { Link, useNavigate } from "react-router-dom";
+
 export default function Navbar() {
   const [activeTab, setActiveTab] = useState("home");
+  const navigate = useNavigate();
+
+  const handleSignOut = () => {
+    localStorage.removeItem("token");
+    navigate("/login");
+  };
+
   return (
     <header className="border-b border-slate-800/50 backdrop-blur-sm bg-slate-900/50">
       <div className="container mx-auto px-6 py-4">
@@ -62,7 +68,12 @@ export default function Navbar() {
             >
               Search
             </Link>
-            <Link className="text-slate-400 hover:text-white">Sign out</Link>
+            <button
+              onClick={handleSignOut}
+              className="text-slate-400 hover:text-white px-4 py-2 rounded-lg transition-colors"
+            >
+              Sign out
+            </button>
           </nav>
         </div>
       </div>
