@@ -9,6 +9,7 @@ export default function LibraryModal({ isOpen, onClose, data, onRefresh }) {
     status: "ongoing",
     type: "manga",
     rating: "",
+    watch: "",
   });
 
   useEffect(() => {
@@ -21,6 +22,7 @@ export default function LibraryModal({ isOpen, onClose, data, onRefresh }) {
         status: data.status || "ongoing",
         type: data.type || "manga",
         rating: data.rating || "",
+        Watch: data.rating || "",
       });
     } else {
       setFormData({
@@ -31,6 +33,7 @@ export default function LibraryModal({ isOpen, onClose, data, onRefresh }) {
         status: "ongoing",
         type: "manga",
         rating: "",
+        Watch: "",
       });
     }
   }, [data]);
@@ -56,6 +59,7 @@ export default function LibraryModal({ isOpen, onClose, data, onRefresh }) {
         Image: formData.image,
         Status: formData.status,
         Rating: formData.rating,
+        Watch: formData.Watch,
         ...(formData.type === "anime"
           ? { Episodes: parseInt(formData.chapters) || null }
           : { Chapters: parseInt(formData.chapters) || null }),
@@ -124,28 +128,33 @@ export default function LibraryModal({ isOpen, onClose, data, onRefresh }) {
         </h2>
 
         {/* Form Inputs */}
-        {["title", "chapters", "genre", "image", "rating"].map((field) => (
-          <div key={field} className="mb-4">
-            <label htmlFor={field} className="block text-white mb-2 capitalize">
-              {field}
-            </label>
-            <input
-              id={field}
-              type={
-                field === "image"
-                  ? "url"
-                  : field === "rating"
-                  ? "number"
-                  : "text"
-              }
-              name={field}
-              value={formData[field]}
-              onChange={handleInputChange}
-              className="w-full p-2 rounded bg-slate-800 text-white border border-slate-600 focus:border-purple-500 focus:outline-none transition"
-              {...(field === "rating" && { min: 0, max: 10, step: 0.1 })}
-            />
-          </div>
-        ))}
+        {["title", "chapters", "genre", "image", "rating", "watch"].map(
+          (field) => (
+            <div key={field} className="mb-4">
+              <label
+                htmlFor={field}
+                className="block text-white mb-2 capitalize"
+              >
+                {field}
+              </label>
+              <input
+                id={field}
+                type={
+                  field === "image"
+                    ? "url"
+                    : field === "rating"
+                    ? "number"
+                    : "text"
+                }
+                name={field}
+                value={formData[field]}
+                onChange={handleInputChange}
+                className="w-full p-2 rounded bg-slate-800 text-white border border-slate-600 focus:border-purple-500 focus:outline-none transition"
+                {...(field === "rating" && { min: 0, max: 10, step: 0.1 })}
+              />
+            </div>
+          )
+        )}
 
         {/* Type & Status Select */}
         <div className="mb-4">

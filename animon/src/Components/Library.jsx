@@ -52,6 +52,7 @@ export default function Library() {
             description: manga.description || "No description available.",
             chapters: manga.Chapters || 0,
             genre: manga.Genre || "Unknown",
+            watch: manga.Watch || "Unknown",
           }))
         : [];
 
@@ -78,6 +79,7 @@ export default function Library() {
             description: anime.description || "No description available.",
             episodes: anime.Episodes || 0,
             genre: anime.Genre || "Unknown",
+            watch: anime.Watch || "Unknown",
           }))
         : [];
 
@@ -241,11 +243,20 @@ export default function Library() {
                       )}
                       {item.type}
                     </p>
-                    <div className="flex items-center gap-2 mb-2">
-                      <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                      <span className="text-white font-semibold">
-                        {item.rating}
-                      </span>
+
+                    <div className="flex justify-between items-center gap-2 mb-2">
+                      <div>
+                        <Star className="w-4 h-4 text-yellow-400 fill-current" />
+                        <span className="text-white font-semibold">
+                          {item.rating}
+                        </span>
+                      </div>
+                      <button
+                        className="px-2 py-1 rounded-full border bg-orange-500/20 text-orange-400 border-orange-500/30"
+                        onClick={item.watch}
+                      >
+                        <p> Watch Now </p>
+                      </button>
                     </div>
                     <div
                       className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(
