@@ -1,7 +1,31 @@
 import React, { useEffect, useState } from "react";
+import { MediaItem } from "../../types/MediaItem"; // <- adjust path if needed
 
-export default function LibraryModal({ isOpen, onClose, data, onRefresh }) {
-  const [formData, setFormData] = useState({
+interface LibraryModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  data?: MediaItem | null;
+  onRefresh: () => void;
+}
+
+interface FormData {
+  title: string;
+  chapters: string;
+  genre: string;
+  image: string;
+  status: string;
+  type: "manga" | "anime";
+  rating: string;
+  watch: string;
+}
+
+export default function LibraryModal({
+  isOpen,
+  onClose,
+  data,
+  onRefresh,
+}: LibraryModalProps) {
+  const [formData, setFormData] = useState<FormData>({
     title: "",
     chapters: "",
     genre: "",
@@ -12,17 +36,18 @@ export default function LibraryModal({ isOpen, onClose, data, onRefresh }) {
     watch: "",
   });
 
+  // Populate form when data changes
   useEffect(() => {
     if (data) {
       setFormData({
         title: data.title || "",
-        chapters: data.chapters || data.episodes || "",
+        chapters: data.chapters?.toString() ?? data.episodes?.toString() ?? "",
         genre: data.genre || "",
         image: data.image || "",
         status: data.status || "ongoing",
         type: data.type || "manga",
-        rating: data.rating || "",
-        Watch: data.rating || "",
+        rating: data.rating?.toString() || "",
+        watch: data.watch || "",
       });
     } else {
       setFormData({
@@ -33,12 +58,14 @@ export default function LibraryModal({ isOpen, onClose, data, onRefresh }) {
         status: "ongoing",
         type: "manga",
         rating: "",
-        Watch: "",
+        watch: "",
       });
     }
   }, [data]);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -46,6 +73,8 @@ export default function LibraryModal({ isOpen, onClose, data, onRefresh }) {
   const handleSubmit = async () => {
     try {
       const token = localStorage.getItem("token");
+      if (!token) throw new Error("No auth token found");
+
       const endpointBase = formData.type === "anime" ? "animes" : "mangas";
       const id = data?.id?.split("-")[1];
       const method = data ? "PUT" : "POST";
@@ -58,8 +87,8 @@ export default function LibraryModal({ isOpen, onClose, data, onRefresh }) {
         Genre: formData.genre,
         Image: formData.image,
         Status: formData.status,
-        Rating: formData.rating,
-        Watch: formData.Watch,
+        Rating: parseFloat(formData.rating) || null,
+        Watch: formData.watch,
         ...(formData.type === "anime"
           ? { Episodes: parseInt(formData.chapters) || null }
           : { Chapters: parseInt(formData.chapters) || null }),
@@ -69,7 +98,7 @@ export default function LibraryModal({ isOpen, onClose, data, onRefresh }) {
         method,
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // add token here
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(mappedData),
       });
@@ -89,6 +118,8 @@ export default function LibraryModal({ isOpen, onClose, data, onRefresh }) {
     if (!data) return;
 
     const token = localStorage.getItem("token");
+    if (!token) return;
+
     const endpointBase = data.type === "anime" ? "animes" : "mangas";
     const id = data.id.split("-")[1];
     const endpoint = `http://localhost:3000/${endpointBase}/${id}`;
@@ -97,7 +128,7 @@ export default function LibraryModal({ isOpen, onClose, data, onRefresh }) {
       const res = await fetch(endpoint, {
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${token}`, // add token here
+          Authorization: `Bearer ${token}`,
         },
       });
       if (!res.ok) throw new Error("Delete failed");
@@ -128,33 +159,30 @@ export default function LibraryModal({ isOpen, onClose, data, onRefresh }) {
         </h2>
 
         {/* Form Inputs */}
-        {["title", "chapters", "genre", "image", "rating", "watch"].map(
-          (field) => (
-            <div key={field} className="mb-4">
-              <label
-                htmlFor={field}
-                className="block text-white mb-2 capitalize"
-              >
-                {field}
-              </label>
-              <input
-                id={field}
-                type={
-                  field === "image"
-                    ? "url"
-                    : field === "rating"
-                    ? "number"
-                    : "text"
-                }
-                name={field}
-                value={formData[field]}
-                onChange={handleInputChange}
-                className="w-full p-2 rounded bg-slate-800 text-white border border-slate-600 focus:border-purple-500 focus:outline-none transition"
-                {...(field === "rating" && { min: 0, max: 10, step: 0.1 })}
-              />
-            </div>
-          )
-        )}
+        {(
+          ["title", "chapters", "genre", "image", "rating", "watch"] as const
+        ).map((field) => (
+          <div key={field} className="mb-4">
+            <label htmlFor={field} className="block text-white mb-2 capitalize">
+              {field}
+            </label>
+            <input
+              id={field}
+              type={
+                field === "image"
+                  ? "url"
+                  : field === "rating"
+                  ? "number"
+                  : "text"
+              }
+              name={field}
+              value={formData[field]}
+              onChange={handleInputChange}
+              className="w-full p-2 rounded bg-slate-800 text-white border border-slate-600 focus:border-purple-500 focus:outline-none transition"
+              {...(field === "rating" && { min: 0, max: 10, step: 0.1 })}
+            />
+          </div>
+        ))}
 
         {/* Type & Status Select */}
         <div className="mb-4">
@@ -201,13 +229,15 @@ export default function LibraryModal({ isOpen, onClose, data, onRefresh }) {
           >
             {data ? "Update Item" : "Add Item"}
           </button>
-          <button
-            type="button"
-            onClick={handleDelete}
-            className="flex-1 bg-slate-600 hover:bg-slate-700 text-white py-2 px-4 rounded transition-colors"
-          >
-            Delete
-          </button>
+          {data && (
+            <button
+              type="button"
+              onClick={handleDelete}
+              className="flex-1 bg-slate-600 hover:bg-slate-700 text-white py-2 px-4 rounded transition-colors"
+            >
+              Delete
+            </button>
+          )}
         </div>
       </div>
     </div>

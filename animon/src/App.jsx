@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
-import Login from "./Components/Login";
-import MainPage from "./Components/MainPage";
-import Library from "./Components/Library"; // ✅ create/import this component
-import SearchComponent from "./Components/Search";
+import Login from "./Components/Auth/Login";
+import MainPage from "./Pages/MainPage";
+import Library from "./Components/Library/Library"; // ✅ create/import this component
+import SearchComponent from "./Pages/SearchPage";
 import "./App.css";
 
 function App() {

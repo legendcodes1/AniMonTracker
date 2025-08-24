@@ -201,7 +201,6 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
     try {
       const endpoint = isLogin
         ? "http://localhost:3000/users/login"

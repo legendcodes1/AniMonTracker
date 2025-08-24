@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Search, Filter, X } from "lucide-react";
-import Navbar from "./Navbar";
+import Navbar from "../Components/Navbar/Navbar.jsx";
 
 export default function SearchComponent() {
   const [query, setQuery] = useState("");
