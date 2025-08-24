@@ -19,8 +19,12 @@ Insert screenshot	Insert screenshot	Insert screenshot	Insert screenshot of Supab
 ⚡ Fast & responsive React frontend with dynamic modals
 
 🔧 Tech Stack
-Frontend	Backend	Database	Auth
-React	Express.js	PostgreSQL via Supabase	Supabase Auth
+Frontend: React + TypeScript + TailwindCSS
+Backend: Express.js + Node.js
+Database: PostgreSQL via Supabase
+Auth: Supabase Auth (JWT & password hashing)
+Testing: Postman / API endpoints tested
+
 
 📐 Entity Relationship Diagram (ERD)
 Supabase automatically manages database schemas. Here's the actual ERD used:
