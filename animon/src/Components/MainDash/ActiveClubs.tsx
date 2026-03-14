@@ -7,20 +7,20 @@ export default function ActiveClubs(){
             <div className="flex-col">
             <div className="flex justify-between"> 
                 <div className="flex-col"> 
-                    <h2 className="text-white"> Studio Ghibli fans</h2>
-                    <p> 12.5K Members</p>
+                    <h2 className="text-white font-bold"> Studio Ghibli fans</h2>
+                    <p className="text-white"> 12.5K Members</p>
                 </div>
-                <div> 
+                <div className="border rounded-full bg-blue-500 w-8 h-8"> 
                     <Plus/>
                 </div>
             </div>
 
          <div className="flex justify-between"> 
                 <div className="flex-col"> 
-                    <h2 className="text-white"> Isekai Junkies</h2>
-                    <p> 8.2k Members</p>
+                    <h2 className="text-white font-bold"> Isekai Junkies</h2>
+                    <p className="text-white"> 8.2k Members</p>
                 </div>
-                <div> 
+                <div className="border rounded-full bg-blue-500 w-8 h-8"> 
                     <Plus/>
                 </div>
             </div>

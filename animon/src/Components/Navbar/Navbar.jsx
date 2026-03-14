@@ -74,6 +74,17 @@ export default function Navbar() {
             >
               Search
             </Link>
+                  <Link
+              onClick={() => setActiveTab("clubs")}
+              to="/clubs"
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                activeTab === "search"
+                  ? "bg-purple-600 text-white"
+                  : "text-slate-400 hover:text-white"
+              }`}
+            >
+              Clubs
+            </Link>
             <button
               onClick={handleSignOut}
               className="text-slate-400 hover:text-white px-4 py-2 rounded-lg transition-colors"

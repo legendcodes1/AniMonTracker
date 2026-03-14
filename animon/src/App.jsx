@@ -5,6 +5,7 @@ import MainPage from "./Pages/MainPage";
 import Library from "./Components/Library/Library"; // ✅ create/import this component
 import SearchComponent from "./Pages/SearchPage";
 import Home from "./Components/MainDash/Home";
+import Clubs from "./Components/Clubs/Clubs";
 import "./App.css";
 
 function App() {
@@ -30,6 +31,7 @@ function App() {
           <Route path="/search" element={<SearchComponent />} />
           <Route path="/login" element={<Login />} />
           <Route path="/discovery" element={<Home />} />
+          <Route path="/clubs" element={<Clubs />} />
     
         </Routes>
       </div>
