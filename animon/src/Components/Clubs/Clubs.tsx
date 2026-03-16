@@ -37,10 +37,10 @@ return(
             <h2 className="text-2xl text-white p-2"> Browse by Demographics</h2>
 
             <div className="grid grid-cols-4 gap-3 mt-5"> 
-            <DemographicCard icon={<Swords size={32} />} name="Shonen" number="2.4k" bg="bg-slate-700" />
-            <DemographicCard icon={<Skull size={32} />} name="Seinen" number="1.8k" bg="bg-indigo-900" />
-            <DemographicCard icon={<Heart size={32} />} name="Shojo" number="1.1k" bg="bg-purple-900" />
-            <DemographicCard icon={<Smile size={32} />} name="Josei" number="640" bg="bg-yellow-900" />
+        <DemographicCard icon={<Swords size={32} />} name="Shonen" number="2.4k" bg="bg-blue-500/20" iconColor="text-blue-500" />
+        <DemographicCard icon={<Skull size={32} />} name="Seinen" number="1.8k" bg="bg-purple-500/20" iconColor="text-purple-500" />
+        <DemographicCard icon={<Heart size={32} />} name="Shojo" number="1.1k" bg="bg-pink-500/20" iconColor="text-pink-500" />
+        <DemographicCard icon={<Smile size={32} />} name="Josei" number="640" bg="bg-amber-500/20" iconColor="text-amber-500" />
 
 
             </div>
