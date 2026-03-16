@@ -1,54 +1,115 @@
-import { Item } from "../types/item";
+import { MediaItem } from "../types/MediaItem";
 
-export async function fetchMediaCollection(token: string): Promise<Item[]> {
-  // let userId = localStorage.getItem("userId")
-  const [mangasRes, animesRes] = await Promise.all([
-    
-    fetch(`http://localhost:8080/api/users/${localStorage.getItem("userId")}/library`, {
-      headers: { Authorization: `Bearer ${token}` },
-    }),
-    // fetch("http://localhost:3000/animes", {
-    //   headers: { Authorization: `Bearer ${token}` },
-    // }),
-  ]);
+export async function fetchMediaCollection(token: string): Promise<MediaItem[]> {
+  const userId = localStorage.getItem("userId");
+  
+  if (!userId) {
+    throw new Error("User ID not found");
+  }
 
-  if (!mangasRes.ok)
-    throw new Error(`Failed to fetch mangas: ${mangasRes.statusText}`);
-  if (!animesRes.ok)
-    throw new Error(`Failed to fetch animes: ${animesRes.statusText}`);
+  try {
+    const res = await fetch(
+      `http://localhost:8080/api/users/${userId}/library`,
+      {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+      }
+    );
 
-  const mangasData = await mangasRes.json();
-  const animesData = await animesRes.json();
+    if (!res.ok) {
+      throw new Error(`Failed to fetch library: ${res.statusText}`);
+    }
 
-  const mangas: Item[] = (Array.isArray(mangasData) ? mangasData : []).map(
-    (m) => ({
-      id: `manga-${m.id}`,
-      title: m.Name ?? "Untitled",
-      type: "manga",
-      rating: m.Rating ?? 8.5,
-      image: m.Image ?? "https://via.placeholder.com/300x400?text=Manga+Cover",
-      status: m.Status ?? "ongoing",
-      description: m.description ?? "No description available.",
-      chapters: m.Chapters ?? 0,
-      genre: m.Genre ?? "Unknown",
-      watch: m.Watch ?? "#",
-    })
+    const data = await res.json();
+
+    // Map Spring Boot response to your frontend MediaItem type
+    const items: MediaItem[] = (Array.isArray(data) ? data : []).map((item) => ({
+      id: item.animeId,
+      title: item.animeTitle,
+      type: item.type, // "anime" or "manga"
+      status: item.status, // "watching", "completed", etc.
+      image: item.animePoster || "https://via.placeholder.com/300x400?text=No+Image",
+      rating: item.rating || 0,
+      episodes: item.episodesWatched || 0,
+      chapters: item.chaptersRead || 0,
+      totalEpisodes: item.totalEpisodes,
+      totalChapters: item.totalChapters,
+      notes: item.notes || "",
+      addedAt: item.addedAt,
+    }));
+
+    return items;
+  } catch (error) {
+    console.error("Error fetching library:", error);
+    throw error;
+  }
+}
+
+// Add new function for filtering
+export async function fetchLibraryByType(
+  token: string,
+  type: "anime" | "manga"
+): Promise<MediaItem[]> {
+  const userId = localStorage.getItem("userId");
+  
+  if (!userId) {
+    throw new Error("User ID not found");
+  }
+
+  const res = await fetch(
+    `http://localhost:8080/api/users/${userId}/library/type/${type}`,
+    {
+      headers: { 
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+    }
   );
 
-  const animes: Item[] = (Array.isArray(animesData) ? animesData : []).map(
-    (a) => ({
-      id: `anime-${a.id}`,
-      title: a.Name ?? "Untitled",
-      type: "anime",
-      rating: a.Rating ?? 8.5,
-      image: a.Image ?? "https://via.placeholder.com/300x400?text=Anime+Cover",
-      status: a.Status ?? "ongoing",
-      description: a.description ?? "No description available.",
-      episodes: a.Episodes ?? 0,
-      genre: a.Genre ?? "Unknown",
-      watch: a.Watch ?? "#",
-    })
+  if (!res.ok) {
+    throw new Error(`Failed to fetch ${type}: ${res.statusText}`);
+  }
+
+  const data = await res.json();
+  return (Array.isArray(data) ? data : []).map((item) => ({
+    id: item.animeId,
+    title: item.animeTitle,
+    type: item.type,
+    status: item.status,
+    image: item.animePoster || "https://via.placeholder.com/300x400",
+    rating: item.rating || 0,
+    episodes: item.episodesWatched || 0,
+    chapters: item.chaptersRead || 0,
+    totalEpisodes: item.totalEpisodes,
+    totalChapters: item.totalChapters,
+    notes: item.notes || "",
+    addedAt: item.addedAt,
+  }));
+}
+
+// Get library stats
+export async function fetchLibraryStats(token: string) {
+  const userId = localStorage.getItem("userId");
+  
+  if (!userId) {
+    throw new Error("User ID not found");
+  }
+
+  const res = await fetch(
+    `http://localhost:8080/api/users/${userId}/library/stats`,
+    {
+      headers: { 
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+    }
   );
 
-  return [...mangas, ...animes];
+  if (!res.ok) {
+    throw new Error("Failed to fetch stats");
+  }
+
+  return await res.json();
 }

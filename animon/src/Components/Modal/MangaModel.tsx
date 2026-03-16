@@ -11,11 +11,14 @@ interface LibraryModalProps {
 interface FormData {
   title: string;
   chapters: string;
+  totalEpisodes: string;     // ✅ ADDED
+  totalChapters: string;     // ✅ ADDED
   genre: string;
   image: string;
+  rating: string;            // ✅ ADDED
+  notes: string;             // ✅ ADDED
   status: "watching" | "completed" | "plan_to_watch" | "dropped";
   type: "manga" | "anime";
-  rating: string;
   watch: string;
 }
 
@@ -28,11 +31,14 @@ export default function LibraryModal({
   const [formData, setFormData] = useState<FormData>({
     title: "",
     chapters: "",
+    totalEpisodes: "",
+    totalChapters: "",
     genre: "",
     image: "",
+    rating: "",
+    notes: "",
     status: "watching",
     type: "manga",
-    rating: "",
     watch: "",
   });
 
@@ -42,29 +48,35 @@ export default function LibraryModal({
       setFormData({
         title: data.title || "",
         chapters: data.chapters?.toString() ?? data.episodes?.toString() ?? "",
+        totalEpisodes: data.totalEpisodes?.toString() ?? "",
+        totalChapters: data.totalChapters?.toString() ?? "",
         genre: data.genre || "",
         image: data.image || "",
+        rating: data.rating?.toString() ?? "",
+        notes: data.notes || "",
         status: data.status as FormData["status"] || "watching",
         type: data.type || "manga",
-        rating: data.rating?.toString() || "",
         watch: data.watch || "",
       });
     } else {
       setFormData({
         title: "",
         chapters: "",
+        totalEpisodes: "",
+        totalChapters: "",
         genre: "",
         image: "",
+        rating: "",
+        notes: "",
         status: "watching",
         type: "manga",
-        rating: "",
         watch: "",
       });
     }
   }, [data]);
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -83,25 +95,48 @@ export default function LibraryModal({
         ? `http://localhost:8080/api/users/${userId}/library/${animeId}`
         : `http://localhost:8080/api/users/${userId}/library`;
 
-      const mappedData: any = {
-        animeId,
-        animeTitle: formData.title,
-        type: formData.type,
-        status: formData.status,
-        animePoster: formData.image,
-        rating: formData.rating ? parseFloat(formData.rating) : null,
-      };
+      // Match backend DTO structure
+      const requestBody = data
+        ? {
+            // UpdateLibraryItemRequest for PUT
+            status: formData.status,
+            episodesWatched: formData.type === "anime" && formData.chapters
+              ? parseInt(formData.chapters)
+              : null,
+            chaptersRead: formData.type === "manga" && formData.chapters
+              ? parseInt(formData.chapters)
+              : null,
+            rating: formData.rating && formData.rating !== "" 
+              ? parseFloat(formData.rating) 
+              : null,
+            notes: formData.notes || null,
+          }
+        : {
+            // AddToLibraryRequest for POST
+            animeId,
+            animeTitle: formData.title,
+            type: formData.type,
+            status: formData.status,
+            animePoster: formData.image,
+            rating: formData.rating && formData.rating !== "" 
+              ? parseFloat(formData.rating) 
+              : null,
+            episodesWatched: formData.type === "anime" && formData.chapters
+              ? parseInt(formData.chapters)
+              : null,
+            totalEpisodes: formData.totalEpisodes 
+              ? parseInt(formData.totalEpisodes) 
+              : null,
+            chaptersRead: formData.type === "manga" && formData.chapters
+              ? parseInt(formData.chapters)
+              : null,
+            totalChapters: formData.totalChapters 
+              ? parseInt(formData.totalChapters) 
+              : null,
+            notes: formData.notes || null,
+          };
 
-      // Map chapters/episodes properly
-      if (formData.type === "anime") {
-        mappedData.episodesWatched = formData.chapters
-          ? parseInt(formData.chapters)
-          : null;
-      } else {
-        mappedData.chaptersRead = formData.chapters
-          ? parseInt(formData.chapters)
-          : null;
-      }
+      console.log("Sending request:", { method, endpoint, body: requestBody }); // ✅ DEBUG
 
       const res = await fetch(endpoint, {
         method,
@@ -109,15 +144,23 @@ export default function LibraryModal({
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(mappedData),
+        body: JSON.stringify(requestBody),
       });
 
-      if (!res.ok) throw new Error("Submission failed");
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error("Error response:", errorText); // ✅ DEBUG
+        throw new Error(`Submission failed: ${errorText}`);
+      }
+
+      const responseData = await res.json();
+      console.log("Response received:", responseData); // ✅ DEBUG
 
       onRefresh();
       onClose();
     } catch (err) {
-      console.error(err);
+      console.error("Error submitting:", err);
+      alert(err instanceof Error ? err.message : "Failed to save");
     }
   };
 
@@ -166,33 +209,39 @@ export default function LibraryModal({
           {data ? "Edit Item" : "Add New Item"}
         </h2>
 
-        {/* Form Inputs */}
-        {(
-          ["title", "chapters", "genre", "image", "rating", "watch"] as const
-        ).map((field) => (
-          <div key={field} className="mb-4">
-            <label htmlFor={field} className="block text-white mb-2 capitalize">
-              {field}
-            </label>
-            <input
-              id={field}
-              type={
-                field === "image"
-                  ? "url"
-                  : field === "rating"
-                  ? "number"
-                  : "text"
-              }
-              name={field}
-              value={formData[field]}
-              onChange={handleInputChange}
-              className="w-full p-2 rounded bg-slate-800 text-white border border-slate-600 focus:border-purple-500 focus:outline-none transition"
-              {...(field === "rating" && { min: 0, max: 10, step: 0.1 })}
-            />
-          </div>
-        ))}
+        {/* Title */}
+        <div className="mb-4">
+          <label htmlFor="title" className="block text-white mb-2">
+            Title
+          </label>
+          <input
+            id="title"
+            type="text"
+            name="title"
+            value={formData.title}
+            onChange={handleInputChange}
+            className="w-full p-2 rounded bg-slate-800 text-white border border-slate-600 focus:border-purple-500 focus:outline-none transition"
+            placeholder="Enter title"
+          />
+        </div>
 
-        {/* Type & Status Select */}
+        {/* Image URL */}
+        <div className="mb-4">
+          <label htmlFor="image" className="block text-white mb-2">
+            Image URL
+          </label>
+          <input
+            id="image"
+            type="url"
+            name="image"
+            value={formData.image}
+            onChange={handleInputChange}
+            className="w-full p-2 rounded bg-slate-800 text-white border border-slate-600 focus:border-purple-500 focus:outline-none transition"
+            placeholder="https://..."
+          />
+        </div>
+
+        {/* Type */}
         <div className="mb-4">
           <label htmlFor="type" className="block text-white mb-2">
             Type
@@ -209,7 +258,8 @@ export default function LibraryModal({
           </select>
         </div>
 
-        <div className="mb-6">
+        {/* Status */}
+        <div className="mb-4">
           <label htmlFor="status" className="block text-white mb-2">
             Status
           </label>
@@ -225,6 +275,75 @@ export default function LibraryModal({
             <option value="plan_to_watch">Plan to Watch</option>
             <option value="dropped">Dropped</option>
           </select>
+        </div>
+
+        {/* Chapters/Episodes Watched */}
+        <div className="mb-4">
+          <label htmlFor="chapters" className="block text-white mb-2">
+            {formData.type === "anime" ? "Episodes Watched" : "Chapters Read"}
+          </label>
+          <input
+            id="chapters"
+            type="number"
+            name="chapters"
+            value={formData.chapters}
+            onChange={handleInputChange}
+            min="0"
+            className="w-full p-2 rounded bg-slate-800 text-white border border-slate-600 focus:border-purple-500 focus:outline-none transition"
+            placeholder="0"
+          />
+        </div>
+
+        {/* Total Episodes/Chapters */}
+        <div className="mb-4">
+          <label htmlFor={formData.type === "anime" ? "totalEpisodes" : "totalChapters"} className="block text-white mb-2">
+            {formData.type === "anime" ? "Total Episodes" : "Total Chapters"}
+          </label>
+          <input
+            id={formData.type === "anime" ? "totalEpisodes" : "totalChapters"}
+            type="number"
+            name={formData.type === "anime" ? "totalEpisodes" : "totalChapters"}
+            value={formData.type === "anime" ? formData.totalEpisodes : formData.totalChapters}
+            onChange={handleInputChange}
+            min="0"
+            className="w-full p-2 rounded bg-slate-800 text-white border border-slate-600 focus:border-purple-500 focus:outline-none transition"
+            placeholder="0"
+          />
+        </div>
+
+        {/* Rating */}
+        <div className="mb-4">
+          <label htmlFor="rating" className="block text-white mb-2">
+            Rating (0-10)
+          </label>
+          <input
+            id="rating"
+            type="number"
+            name="rating"
+            value={formData.rating}
+            onChange={handleInputChange}
+            min="0"
+            max="10"
+            step="0.1"
+            className="w-full p-2 rounded bg-slate-800 text-white border border-slate-600 focus:border-purple-500 focus:outline-none transition"
+            placeholder="e.g., 8.5"
+          />
+        </div>
+
+        {/* Notes */}
+        <div className="mb-6">
+          <label htmlFor="notes" className="block text-white mb-2">
+            Notes
+          </label>
+          <textarea
+            id="notes"
+            name="notes"
+            value={formData.notes}
+            onChange={handleInputChange}
+            rows={3}
+            className="w-full p-2 rounded bg-slate-800 text-white border border-slate-600 focus:border-purple-500 focus:outline-none transition"
+            placeholder="Your thoughts..."
+          />
         </div>
 
         {/* Buttons */}

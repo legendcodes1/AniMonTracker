@@ -3,22 +3,40 @@ import Navbar from "../Navbar/Navbar";
 import LibraryModal from "../Modal/MangaModel";
 import LibraryCard from "./LibraryCard";
 import { MediaItem } from "../../types/MediaItem";
-import { fetchMediaCollection } from "../../services/mediaService";
+import { fetchMediaCollection, fetchLibraryByType } from "../../services/mediaService";
 
 const Library: React.FC = () => {
-  const [collection, setCollection] = useState<MediaItem[]>([]);
+   const [collection, setCollection] = useState<MediaItem[]>([]);
   const [filter, setFilter] = useState<"all" | "anime" | "manga">("all");
   const [modalItem, setModalItem] = useState<MediaItem | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const token = localStorage.getItem("token")!;
 
+  // Fetch data based on filter
   useEffect(() => {
-    fetchMediaCollection(token).then(setCollection).catch(console.error);
-  }, [token]);
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        if (filter === "all") {
+          const data = await fetchMediaCollection(token);
+          setCollection(data);
+        } else {
+          const data = await fetchLibraryByType(token, filter);
+          setCollection(data);
+        }
+      } catch (error) {
+        console.error("Error fetching library:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const filteredItems =
-    filter === "all" ? collection : collection.filter((i) => i.type === filter);
+    fetchData();
+  }, [token, filter]);
+
+  const filteredItems = collection; // Already filtered by API
 
   return (
     <div className="min-h-screen">

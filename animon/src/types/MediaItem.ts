@@ -1,16 +1,16 @@
-export type MediaType = "anime" | "manga";
-export type MediaStatus = "watching" | "completed" | "plan_to_watch" | "dropped";
-
 export interface MediaItem {
-  id: string; // unique, e.g., "anime-1"
-  title: string;
-  type: MediaType;
-  rating: number;
-  image: string;
-  status: MediaStatus;
-  description: string;
-  episodes?: number; // for anime
-  chapters?: number; // for manga
-  genre: string;
-  watch: string; // URL or function name
+  id: string; // animeId from backend
+  title: string; // animeTitle
+  type: "anime" | "manga";
+  status: "watching" | "completed" | "plan_to_watch" | "dropped";
+  image: string; // animePoster
+  rating?: number;
+  episodes?: number; // episodesWatched
+  chapters?: number; // chaptersRead
+  totalEpisodes?: number;
+  totalChapters?: number;
+  notes?: string;
+  addedAt?: string;
+  genre?: string; // if you want to keep this
+  watch?: string; // if you want to keep this
 }
