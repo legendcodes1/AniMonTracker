@@ -36,7 +36,9 @@ export default function ClubCard({ image, badge, title, description }) {
             <div className="w-6 h-6 rounded-full bg-slate-600" />
             <div className="w-6 h-6 rounded-full bg-slate-500" />
           </div>
-          <button className="text-blue-500 font-semibold text-sm">Join Circle</button>
+            <button className="text-blue-500 font-semibold text-sm border border-blue-500 px-4 py-1 rounded-full hover:bg-blue-500 hover:text-white transition-colors">
+                Join Circle
+                </button>
         </div>
       </div>
 
