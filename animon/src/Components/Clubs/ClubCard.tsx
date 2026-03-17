@@ -1,5 +1,13 @@
 // ClubCard.tsx
-export default function ClubCard({ image, badge, title, description }) {
+
+interface ClubCardProps {
+  image: string;
+  badge : number | string;
+  title: string;
+  description: string;
+}
+
+export default function ClubCard({ image, badge, title, description } : ClubCardProps) {
   return (
     <div className="bg-slate-800 rounded-xl overflow-hidden border border-slate-700 hover:shadow-xl transition-shadow">
       <div className="relative">
