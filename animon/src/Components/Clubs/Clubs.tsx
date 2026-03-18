@@ -36,6 +36,7 @@ return(
     <Navbar/>
     <div className="max-w-6xl mx-auto mt-10">
             <ClubHeader/>
+            <button className="bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 px-4 py-2 rounded-lg text-sm font-bold transition-colors"> Add Club</button>
             <ClubSearch />
                <h2 className="text-2xl text-white p-2"> Featured Clubs</h2>
             <div className="grid grid-cols-3 mt-5 gap-5">
