@@ -3,32 +3,36 @@ import Navbar from "../Navbar/Navbar";
 import ClubCard from "./ClubCard";
 import ClubHeader from "./ClubHeader";
 import ClubSearch from "./ClubSearch";
+import ClubModal from "../Modal/ClubModal";
 import DemographicCard from "./DemographicCard";
 import { Swords, Skull, Heart, Smile } from "lucide-react";
 
 export default function Clubs(){
    const [currentClubs, setCurrentClubs] = useState<any[]>([]);
+    const [modalOpen, setModalOpen] = useState(false)
 
-
-   useEffect(() => {
+  
     const fetchClubData = async () => {
-    try{
-        const response = await fetch("http://localhost:8080/api/groups");
-        if(!response.ok){
-            throw new Error("failed to fetch clubs")
-        }
+        try{
+            const response = await fetch("http://localhost:8080/api/groups");
+            if(!response.ok){
+                throw new Error("failed to fetch clubs")
+            }
 
-        const data = await response.json()
-         setCurrentClubs(data);
-          console.log(data)
-        }catch(error){
-            console.log("Error fetching clubs", error)
-        }
+            const data = await response.json()
+            setCurrentClubs(data);
+            console.log(data)
+            }catch(error){
+                console.log("Error fetching clubs", error)
+            }
     };
 
-    fetchClubData();
 
-   }, []);
+    useEffect(() => {
+        fetchClubData();
+    },[])
+
+
    
 
 return(
@@ -36,7 +40,12 @@ return(
     <Navbar/>
     <div className="max-w-6xl mx-auto mt-10">
             <ClubHeader/>
-            <button className="bg-blue-500/10 hover:bg-blue-500/20 text-blue-500 px-4 py-2 rounded-lg text-sm font-bold transition-colors"> Add Club</button>
+             <button
+            onClick={() => setModalOpen(true)}
+            className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded transition-colors"
+          >
+            + Create Club
+          </button>
             <ClubSearch />
                <h2 className="text-2xl text-white p-2"> Featured Clubs</h2>
             <div className="grid grid-cols-3 mt-5 gap-5">
@@ -66,7 +75,11 @@ return(
 
             </div>
     </div>
-
+        <ClubModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onRefresh={fetchClubData}
+      />    
     </>
 )
 }
