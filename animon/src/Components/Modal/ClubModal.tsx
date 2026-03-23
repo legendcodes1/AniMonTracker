@@ -1,25 +1,23 @@
-
-
 import { useState } from "react";
 
 interface ClubFormData {
-name : string,
-description: string,
-avatarUrl: string,
+  name: string;
+  description: string;
+  avatarUrl: string;
 }
 
-interface ClubModalProps{
-  isOpen : boolean;
-  onClose : () => void;
-  onRefresh:  () => void;
+interface ClubModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onRefresh: () => void;
 }
 
-export default function ClubModal({isOpen, onClose, onRefresh} : ClubModalProps){
-  const[formData, setFormData] = useState<ClubFormData>({
+export default function ClubModal({ isOpen, onClose, onRefresh }: ClubModalProps) {
+  const [formData, setFormData] = useState<ClubFormData>({
     name: "",
     description: "",
     avatarUrl: ""
-  })
+  });
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -32,8 +30,9 @@ export default function ClubModal({isOpen, onClose, onRefresh} : ClubModalProps)
     try {
       const token = localStorage.getItem("token");
       const userId = localStorage.getItem("userId");
-      if(!token || !userId ) throw new Error("Not authenticated") 
       
+      if (!token || !userId) throw new Error("Not authenticated");
+
       const requestBody = {
         name: formData.name,
         description: formData.description,
@@ -41,20 +40,21 @@ export default function ClubModal({isOpen, onClose, onRefresh} : ClubModalProps)
         createdBy: userId,
       };
 
-      const response = await fetch("http://localhost:8080//api/groups/", {
+      // ✅ FIXED: Removed double slashes and trailing slash
+      const response = await fetch("http://localhost:8080/api/groups", {
         method: "POST",
         headers: {
-          "Contend-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json", // ✅ FIXED: Changed "Contend-Type" to "Content-Type"
+          "Authorization": `Bearer ${token}`,
         },
-        body: JSON.stringify(requestBody)
-      })
+        body: JSON.stringify(requestBody),
+      });
 
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`Failed to create group: ${errorText}`);
       }
-      
+
       const data = await response.json();
       console.log("Group created:", data);
 
@@ -62,20 +62,19 @@ export default function ClubModal({isOpen, onClose, onRefresh} : ClubModalProps)
         name: "",
         description: "",
         avatarUrl: "",
-      })
+      });
 
       onRefresh();
       onClose();
     } catch (error) {
-      console.log("Error creating a group:", error);
+      console.error("Error creating a group:", error);
       alert(error instanceof Error ? error.message : "Failed to create group");
     }
   };
 
-  if(!isOpen) return null;
-    
-   
- return (
+  if (!isOpen) return null;
+
+  return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-slate-900 rounded-lg p-6 w-full max-w-md max-h-[90vh] overflow-y-auto relative">
         {/* Close Button */}
