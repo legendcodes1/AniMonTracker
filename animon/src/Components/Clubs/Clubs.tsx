@@ -55,6 +55,7 @@ return(
               currentClubs.slice(0, 3).map((club) => (
                 <ClubCard 
                 key={club.id}
+                id={club.id}
                 title={club.name}
                 description={club.description}
                 image={club.avatarUrl} 

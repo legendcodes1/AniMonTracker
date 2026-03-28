@@ -40,11 +40,11 @@ export default function ClubModal({ isOpen, onClose, onRefresh }: ClubModalProps
         createdBy: userId,
       };
 
-      // ✅ FIXED: Removed double slashes and trailing slash
+  
       const response = await fetch("http://localhost:8080/api/groups", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json", // ✅ FIXED: Changed "Contend-Type" to "Content-Type"
+          "Content-Type": "application/json", 
           "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify(requestBody),
