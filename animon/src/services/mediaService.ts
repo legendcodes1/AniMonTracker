@@ -9,7 +9,7 @@ export async function fetchMediaCollection(token: string): Promise<MediaItem[]> 
 
   try {
     const res = await fetch(
-      `http://localhost:8080/api/users/${userId}/library`,
+      `http://localhost:3000/api/library`,
       {
         headers: { 
           Authorization: `Bearer ${token}`,
@@ -59,7 +59,7 @@ export async function fetchLibraryByType(
   }
 
   const res = await fetch(
-    `http://localhost:8080/api/users/${userId}/library/type/${type}`,
+    `http://localhost:8080/api/library/type/${type}`,
     {
       headers: { 
         Authorization: `Bearer ${token}`,
@@ -98,7 +98,7 @@ export async function fetchLibraryStats(token: string) {
   }
 
   const res = await fetch(
-    `http://localhost:8080/api/users/${userId}/library/stats`,
+    `http://localhost:8080/api/library/stats`,
     {
       headers: { 
         Authorization: `Bearer ${token}`,

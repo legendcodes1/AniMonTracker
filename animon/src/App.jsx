@@ -26,7 +26,7 @@ function App() {
       {/* App content */}
       <div className="relative z-10">
         <Routes>
-          <Route path="/" element={<MainPage />} /> {/* Home */}
+          <Route path="/" element={<Login />} /> {/* Home */}
           <Route path="/mylibrary" element={<Library />} />
           <Route path="/search" element={<SearchComponent />} />
           <Route path="/login" element={<Login />} />

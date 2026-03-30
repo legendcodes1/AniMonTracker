@@ -32,7 +32,7 @@ export default function Navbar() {
           <nav className="flex items-center gap-6">
             <Link
               onClick={() => setActiveTab("home")}
-              to="/"
+              to="/discovery"
               className={`px-4 py-2 rounded-lg transition-colors ${
                 activeTab === "home"
                   ? "bg-purple-600 text-white"
@@ -54,7 +54,7 @@ export default function Navbar() {
             </Link>
                  <Link
               onClick={() => setActiveTab("discovery")}
-              to="/discovery"
+              to="/search"
               className={`px-4 py-2 rounded-lg transition-colors ${
                 activeTab === "discovery"
                   ? "bg-purple-600 text-white"
@@ -62,17 +62,6 @@ export default function Navbar() {
               }`}
             >
               Discovery
-            </Link>
-            <Link
-              onClick={() => setActiveTab("search")}
-              to="/search"
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                activeTab === "search"
-                  ? "bg-purple-600 text-white"
-                  : "text-slate-400 hover:text-white"
-              }`}
-            >
-              Search
             </Link>
                   <Link
               onClick={() => setActiveTab("clubs")}

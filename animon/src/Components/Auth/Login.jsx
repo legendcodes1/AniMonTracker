@@ -198,8 +198,8 @@ export default function Login() {
     setLoading(true);
     try {
       const endpoint = isLogin
-        ? "http://localhost:8080/api/auth/login"
-        : "http://localhost:8080/api/auth/register";
+        ? "http://localhost:3000/users/login"
+        : "http://localhost:3000/users/register";
 
       const payload = isLogin
         ? { email: formData.email, password: formData.password }
@@ -224,8 +224,8 @@ export default function Login() {
       //global state instead
       localStorage.setItem("token", data.token);
       localStorage.setItem("userId", data.userId || data.id);
-      navigate("/dashboard");
-      navigate("/");
+      navigate("/discovery");
+      // navigate("/");
     } catch (err) {
       console.error("Auth error:", err);
     } finally {

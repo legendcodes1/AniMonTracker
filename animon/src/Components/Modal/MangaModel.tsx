@@ -11,12 +11,12 @@ interface LibraryModalProps {
 interface FormData {
   title: string;
   chapters: string;
-  totalEpisodes: string;     // ✅ ADDED
-  totalChapters: string;     // ✅ ADDED
+  totalEpisodes: string;     
+  totalChapters: string;     
   genre: string;
   image: string;
-  rating: string;            // ✅ ADDED
-  notes: string;             // ✅ ADDED
+  rating: string;           
+  notes: string;             
   status: "watching" | "completed" | "plan_to_watch" | "dropped";
   type: "manga" | "anime";
   watch: string;
@@ -92,49 +92,42 @@ export default function LibraryModal({
       const method = data ? "PUT" : "POST";
       const animeId = data?.id || crypto.randomUUID();
       const endpoint = data
-        ? `http://localhost:8080/api/users/${userId}/library/${animeId}`
-        : `http://localhost:8080/api/users/${userId}/library`;
+        ? `http://localhost:3000/api/library/${animeId}`
+        : `http://localhost:3000/api/library`;
 
       // Match backend DTO structure
       const requestBody = data
-        ? {
-            // UpdateLibraryItemRequest for PUT
-            status: formData.status,
-            episodesWatched: formData.type === "anime" && formData.chapters
-              ? parseInt(formData.chapters)
-              : null,
-            chaptersRead: formData.type === "manga" && formData.chapters
-              ? parseInt(formData.chapters)
-              : null,
-            rating: formData.rating && formData.rating !== "" 
-              ? parseFloat(formData.rating) 
-              : null,
-            notes: formData.notes || null,
-          }
-        : {
-            // AddToLibraryRequest for POST
-            animeId,
-            animeTitle: formData.title,
-            type: formData.type,
-            status: formData.status,
-            animePoster: formData.image,
-            rating: formData.rating && formData.rating !== "" 
-              ? parseFloat(formData.rating) 
-              : null,
-            episodesWatched: formData.type === "anime" && formData.chapters
-              ? parseInt(formData.chapters)
-              : null,
-            totalEpisodes: formData.totalEpisodes 
-              ? parseInt(formData.totalEpisodes) 
-              : null,
-            chaptersRead: formData.type === "manga" && formData.chapters
-              ? parseInt(formData.chapters)
-              : null,
-            totalChapters: formData.totalChapters 
-              ? parseInt(formData.totalChapters) 
-              : null,
-            notes: formData.notes || null,
-          };
+  ? {
+      // PUT
+      title: formData.title,
+      type: formData.type,
+      episodes: formData.type === "anime" && formData.chapters ? parseInt(formData.chapters) : null,
+      chapters: formData.type === "manga" && formData.chapters ? parseInt(formData.chapters) : null,
+      total_chapters: formData.totalChapters ? parseInt(formData.totalChapters) : null,
+      total_episodes: formData.totalEpisodes ? parseInt(formData.totalEpisodes) : null,
+      genre: formData.genre || null,
+      image: formData.image || null,
+      status: formData.status,
+      notes: formData.notes || null,
+      watch: formData.watch || null,
+      rating: formData.rating ? parseFloat(formData.rating) : null,
+    }
+  : {
+      // POST
+      title: formData.title,
+      type: formData.type,
+      episodes: formData.type === "anime" && formData.chapters ? parseInt(formData.chapters) : null,
+      chapters: formData.type === "manga" && formData.chapters ? parseInt(formData.chapters) : null,
+      total_chapters: formData.totalChapters ? parseInt(formData.totalChapters) : null,
+      total_episodes: formData.totalEpisodes ? parseInt(formData.totalEpisodes) : null,
+      genre: formData.genre || null,
+      image: formData.image || null,
+      status: formData.status,
+      notes: formData.notes || null,
+      watch: formData.watch || null,
+      rating: formData.rating ? parseFloat(formData.rating) : null,
+      user_id: userId,
+    };
 
       console.log("Sending request:", { method, endpoint, body: requestBody }); // ✅ DEBUG
 
@@ -149,12 +142,12 @@ export default function LibraryModal({
 
       if (!res.ok) {
         const errorText = await res.text();
-        console.error("Error response:", errorText); // ✅ DEBUG
+        console.error("Error response:", errorText); 
         throw new Error(`Submission failed: ${errorText}`);
       }
 
       const responseData = await res.json();
-      console.log("Response received:", responseData); // ✅ DEBUG
+      console.log("Response received:", responseData); 
 
       onRefresh();
       onClose();
@@ -172,7 +165,7 @@ export default function LibraryModal({
 
     if (!token || !userId) return;
 
-    const endpoint = `http://localhost:8080/api/users/${userId}/library/${data.id}`;
+    const endpoint = `http://localhost:3000/api/library/${data.id}`;
 
     try {
       const res = await fetch(endpoint, {
