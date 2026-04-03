@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { createClient } from '@supabase/supabase-js'
+// Create a single supabase client for interacting with your database
+const supabase = createClient( import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY)
 const Particle = ({ delay = 0, color = "#ff6b6b", duration = 6 }) => {
   const [position, setPosition] = useState({ x: Math.random() * 100, y: 100 });
 
@@ -173,7 +175,7 @@ export default function Login() {
       const token = localStorage.getItem("token");
       if (token) {
         try {
-          const res = await fetch("http://localhost:8080/api/auth/me", {
+          const res = await fetch("http://localhost:3000/api/auth/me", {
             headers: { Authorization: `Bearer ${token}` },
           });
           if (!res.ok) throw new Error("Invalid token");
@@ -193,45 +195,59 @@ export default function Login() {
     setFormData((prev) => ({ ...prev, [field]: e.target.value }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const endpoint = isLogin
-        ? "http://localhost:3000/users/login"
-        : "http://localhost:3000/users/register";
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   try {
+  //     const endpoint = isLogin
+  //       ? "http://localhost:3000/users/login"
+  //       : "http://localhost:3000/users/register";
 
-      const payload = isLogin
-        ? { email: formData.email, password: formData.password }
-        : {
-            username: formData.username,
-            email: formData.email,
-            password: formData.password,
-          };
+  //     const payload = isLogin
+  //       ? { email: formData.email, password: formData.password }
+  //       : {
+  //           username: formData.username,
+  //           email: formData.email,
+  //           password: formData.password,
+  //         };
 
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
+  //     const res = await fetch(endpoint, {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify(payload),
+  //     });
 
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.message || "Auth failed");
-      }
+  //     if (!res.ok) {
+  //       const err = await res.json();
+  //       throw new Error(err.message || "Auth failed");
+  //     }
 
-      const data = await res.json();
-      //global state instead
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("userId", data.userId || data.id);
-      navigate("/discovery");
-      // navigate("/");
-    } catch (err) {
-      console.error("Auth error:", err);
-    } finally {
-      setLoading(false);
+  //     const data = await res.json();
+  //     //global state instead
+  //     localStorage.setItem("token", data.token);
+  //     localStorage.setItem("userId", data.userId || data.id);
+  //     navigate("/discovery");
+  //     // navigate("/");
+  //   } catch (err) {
+  //     console.error("Auth error:", err);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const handleSubmit = async (e) => {  
+    e.preventDefault()
+    // console.log(formData.email.length, formData.password.length)
+   const {data, error} =  await supabase.auth.signInWithPassword({
+      email: formData.email,
+     password: formData.password,
+    })
+
+    if(error){
+      console.log(error)
     }
-  };
+  navigate("/discovery")
+}
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-blue-900">
@@ -297,22 +313,11 @@ export default function Login() {
           </div>
 
           <form onSubmit={handleSubmit}>
-            {!isLogin && (
-              <FormGroup
-                label="Username"
-                placeholder="Choose a unique username"
-                value={formData.username}
-                onChange={handleInputChange("username")}
-                required
-              />
-            )}
 
             <FormGroup
-              label={isLogin ? "Email or Username" : "Email"}
+              label="Email"
               type="email"
-              placeholder={
-                isLogin ? "Enter your email or username" : "Enter your email"
-              }
+              placeholder= "Enter your email"
               value={formData.email}
               onChange={handleInputChange("email")}
               required

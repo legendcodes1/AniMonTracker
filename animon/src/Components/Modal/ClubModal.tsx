@@ -36,12 +36,12 @@ export default function ClubModal({ isOpen, onClose, onRefresh }: ClubModalProps
       const requestBody = {
         name: formData.name,
         description: formData.description,
-        avatarUrl: formData.avatarUrl,
+        group_avatar_url: formData.avatarUrl,
         createdBy: userId,
       };
 
   
-      const response = await fetch("http://localhost:8080/api/groups", {
+      const response = await fetch("http://localhost:3000/api/groups", {
         method: "POST",
         headers: {
           "Content-Type": "application/json", 

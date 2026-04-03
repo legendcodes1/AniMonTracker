@@ -8,7 +8,7 @@ export default function ActiveClubs() {
   const fetchClubData = async () => {
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:8080/api/groups");
+      const response = await fetch("http://localhost:3000/api/clubs");
       
       if (!response.ok) {
         throw new Error("failed to fetch clubs");
@@ -26,7 +26,7 @@ export default function ActiveClubs() {
 
   useEffect(() => {
     fetchClubData();
-  }, []); // ✅ Empty array - runs once on mount
+  }, []); // 
 
   return (
     <div className="bg-slate-800 rounded-2xl p-6 w-80">

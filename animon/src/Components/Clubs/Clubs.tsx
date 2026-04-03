@@ -14,7 +14,12 @@ export default function Clubs(){
   
     const fetchClubData = async () => {
         try{
-            const response = await fetch("http://localhost:8080/api/groups");
+            const token = localStorage.getItem("token"); 
+            const response = await fetch("http://localhost:3000/api/clubs", {
+                    headers: {
+                     Authorization: `Bearer ${token}`,
+        },
+            });
             if(!response.ok){
                 throw new Error("failed to fetch clubs")
             }
@@ -58,7 +63,7 @@ return(
                 id={club.id}
                 title={club.name}
                 description={club.description}
-                image={club.avatarUrl} 
+                image={club.group_avatar_url} 
                 badge= {club.memberCount}
                 />
               ))
