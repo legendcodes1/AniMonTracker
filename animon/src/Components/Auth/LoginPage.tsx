@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { createClient } from '@supabase/supabase-js'
-// Create a single supabase client for interacting with your database
-const supabase = createClient( import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_ANON_KEY)
-import ParticleSystem from "./ParticalSystem"
+import { createClient } from "@supabase/supabase-js";
+import ParticleSystem from "./ParticalSystem";
 import { FormGroup } from "../FormComponents/FormGroup";
 import { SubmitButton, TabButton } from "../FormComponents/FormButtons";
+import Login from "./Login";
+import Register from "./Register";
 
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY,
+);
 
-export default function Login() {
+export default function LoginPage() {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -23,32 +27,31 @@ export default function Login() {
     setFormData((prev) => ({ ...prev, [field]: e.target.value }));
   };
 
-
-  const handleLogin = async (e) => {  
-    e.preventDefault()
-   const {data, error} =  await supabase.auth.signInWithPassword({
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: formData.email,
-     password: formData.password,
-    })
+      password: formData.password,
+    });
 
-    if(error){
-      console.log(error)
+    if (error) {
+      console.log(error);
     }
-  navigate("/discovery")
-}
+    navigate("/discovery");
+  };
 
- const handleRegister = async (e) => {  
-    e.preventDefault()
-   const {data, error} =  await supabase.auth.signUp({
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    const { data, error } = await supabase.auth.signUp({
       email: formData.email,
-     password: formData.password,
-    })
+      password: formData.password,
+    });
 
-    if(error){
-      console.log(error)
+    if (error) {
+      console.log(error);
     }
-  navigate("/")
-}
+    navigate("/");
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-blue-900">
@@ -80,56 +83,23 @@ export default function Login() {
           <div
             className="
             flex 
+            flex-col
             bg-white bg-opacity-5 
             rounded-xl 
             p-1 
             mb-8 
-            border border-white border-opacity-10
-          "
+            border border-white border-opacity-10"
           >
+            <div className="flex"> 
             <TabButton active={isLogin} onClick={() => setIsLogin(true)}>
               Sign In
             </TabButton>
             <TabButton active={!isLogin} onClick={() => setIsLogin(false)}>
               Sign Up
             </TabButton>
+            </div>
+            {isLogin ? <Login /> : <Register />}
           </div>
-
-          <form onSubmit={handleSubmit}>
-
-            <FormGroup
-              label="Email"
-              type="email"
-              placeholder= "Enter your email"
-              value={formData.email}
-              onChange={handleInputChange("email")}
-              required
-            />
-
-            <FormGroup
-              label="Password"
-              type="password"
-              placeholder="Enter your password"
-              value={formData.password}
-              onChange={handleInputChange("password")}
-              required
-            />
-
-            {!isLogin && (
-              <FormGroup
-                label="Confirm Password"
-                type="password"
-                placeholder="Confirm your password"
-                value={formData.confirmPassword}
-                onChange={handleInputChange("confirmPassword")}
-                required
-              />
-            )}
-
-            <SubmitButton loading={loading}>
-              {isLogin ? "Sign In" : "Create Account"}
-            </SubmitButton>
-          </form>
         </div>
       </div>
     </div>

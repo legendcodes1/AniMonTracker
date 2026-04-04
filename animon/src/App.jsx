@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
-import Login from "./Components/Auth/Login";
+import LoginPage from "./Components/Auth/LoginPage";
 import MainPage from "./Pages/MainPage";
 import Library from "./Components/Library/Library"; // ✅ create/import this component
 import SearchComponent from "./Pages/SearchPage";
@@ -26,7 +26,7 @@ function App() {
       {/* App content */}
       <div className="relative z-10">
         <Routes>
-          <Route path="/" element={<Login />} /> {/* Home */}
+          <Route path="/" element={<LoginPage />} /> {/* Home */}
           <Route path="/mylibrary" element={<Library />} />
           <Route path="/search" element={<SearchComponent />} />
           <Route path="/discovery" element={<Home />} />

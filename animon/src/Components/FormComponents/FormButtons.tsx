@@ -1,4 +1,17 @@
-export const SubmitButton = ({ children, loading = false, onClick }) => (
+import { ReactNode } from 'react';
+
+interface submitButton {
+    children:  ReactNode,
+    loading: boolean,
+    onClick : () => void
+}
+
+interface tabButton {
+    children:  ReactNode,
+    active: boolean,
+    onClick : () => void
+}
+export const SubmitButton = ({ children, loading = false, onClick } : submitButton) => (
   <button
     onClick={onClick}
     disabled={loading}
@@ -27,7 +40,7 @@ export const SubmitButton = ({ children, loading = false, onClick }) => (
   </button>
 );
 
-export const TabButton = ({ active, onClick, children }) => (
+export const TabButton = ({ active, onClick, children }: tabButton) => (
   <button
     onClick={onClick}
     className={`
