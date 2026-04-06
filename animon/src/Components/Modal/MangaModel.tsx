@@ -84,21 +84,22 @@ export default function LibraryModal({
 
   const handleSubmit = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const userId = localStorage.getItem("userId");
+      const token = localStorage.getItem("supabase_token");
+      const userId = localStorage.getItem("user_id");
 
       if (!token || !userId) throw new Error("Not authenticated");
 
       const method = data ? "PUT" : "POST";
-      const animeId = data?.id || crypto.randomUUID();
+      const libraryId = data?.id
       const endpoint = data
-        ? `http://localhost:3000/api/library/${animeId}`
-        : `http://localhost:3000/api/library`;
+        ? `http://localhost:3000/api/library/${libraryId}`
+        : `http://localhost:3000/api/library/${libraryId}`;
 
       // Match backend DTO structure
       const requestBody = data
   ? {
       // PUT
+      user_id: userId, 
       title: formData.title,
       type: formData.type,
       episodes: formData.type === "anime" && formData.chapters ? parseInt(formData.chapters) : null,
@@ -129,7 +130,7 @@ export default function LibraryModal({
       user_id: userId,
     };
 
-      console.log("Sending request:", { method, endpoint, body: requestBody }); // ✅ DEBUG
+      // console.log("Sending request:", { method, endpoint, body: requestBody }); 
 
       const res = await fetch(endpoint, {
         method,
@@ -160,9 +161,11 @@ export default function LibraryModal({
   const handleDelete = async () => {
     if (!data) return;
 
-    const token = localStorage.getItem("token");
-    const userId = localStorage.getItem("userId");
+    const token = localStorage.getItem("supabase_token");
+    const userId = localStorage.getItem("user_id");
 
+    console.log("🔍 Data object:", data);  // ← Add this
+    console.log("🔍 data.id:", data.id);  // ← Add this
     if (!token || !userId) return;
 
     const endpoint = `http://localhost:3000/api/library/${data.id}`;

@@ -1,5 +1,5 @@
 export interface AddToLibraryRequest {
-  animeId: string;
+  libraryId: string;
   animeTitle: string;
   type: 'anime' | 'manga';
   status: 'watching' | 'completed' | 'plan_to_watch' | 'dropped';

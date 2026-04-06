@@ -7,6 +7,7 @@ import SearchComponent from "./Pages/SearchPage";
 import Home from "./Components/MainDash/Home";
 import Clubs from "./Components/Clubs/Clubs";
 import "./App.css";
+import Register from "./Components/Auth/Register";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
       <div className="relative z-10">
         <Routes>
           <Route path="/" element={<LoginPage />} /> {/* Home */}
+          <Route path="/register" element={<Register />} /> {/* Home */}
           <Route path="/mylibrary" element={<Library />} />
           <Route path="/search" element={<SearchComponent />} />
           <Route path="/discovery" element={<Home />} />

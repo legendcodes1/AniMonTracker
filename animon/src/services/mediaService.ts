@@ -1,7 +1,7 @@
 import { MediaItem } from "../types/MediaItem";
 
 export async function fetchMediaCollection(token: string): Promise<MediaItem[]> {
-  const userId = localStorage.getItem("userId");
+    const userId = localStorage.getItem("user_id");
   
   if (!userId) {
     throw new Error("User ID not found");
@@ -9,7 +9,7 @@ export async function fetchMediaCollection(token: string): Promise<MediaItem[]> 
 
   try {
     const res = await fetch(
-      `http://localhost:3000/api/library`,
+      `http://localhost:3000/api/library?user_id=${userId}`,
       {
         headers: { 
           Authorization: `Bearer ${token}`,
@@ -26,11 +26,11 @@ export async function fetchMediaCollection(token: string): Promise<MediaItem[]> 
 
     // Map Spring Boot response to your frontend MediaItem type
     const items: MediaItem[] = (Array.isArray(data) ? data : []).map((item) => ({
-      id: item.animeId,
-      title: item.animeTitle,
+      id: item.id,
+      title: item.title,
       type: item.type, // "anime" or "manga"
       status: item.status, // "watching", "completed", etc.
-      image: item.animePoster || "https://via.placeholder.com/300x400?text=No+Image",
+      image: item.image || "https://via.placeholder.com/300x400?text=No+Image",
       rating: item.rating || 0,
       episodes: item.episodesWatched || 0,
       chapters: item.chaptersRead || 0,
@@ -52,7 +52,7 @@ export async function fetchLibraryByType(
   token: string,
   type: "anime" | "manga"
 ): Promise<MediaItem[]> {
-  const userId = localStorage.getItem("userId");
+  const userId = localStorage.getItem("user_id");
   
   if (!userId) {
     throw new Error("User ID not found");
@@ -74,11 +74,11 @@ export async function fetchLibraryByType(
 
   const data = await res.json();
   return (Array.isArray(data) ? data : []).map((item) => ({
-    id: item.animeId,
-    title: item.animeTitle,
+    id: item.id,
+    title: item.title,
     type: item.type,
     status: item.status,
-    image: item.animePoster || "https://via.placeholder.com/300x400",
+    image: item.image || "https://via.placeholder.com/300x400",
     rating: item.rating || 0,
     episodes: item.episodesWatched || 0,
     chapters: item.chaptersRead || 0,
@@ -91,14 +91,14 @@ export async function fetchLibraryByType(
 
 // Get library stats
 export async function fetchLibraryStats(token: string) {
-  const userId = localStorage.getItem("userId");
+  const userId = localStorage.getItem("user_id");
   
   if (!userId) {
     throw new Error("User ID not found");
   }
 
   const res = await fetch(
-    `http://localhost:8080/api/library/stats`,
+    `http://localhost:3000/api/library/stats`,
     {
       headers: { 
         Authorization: `Bearer ${token}`,

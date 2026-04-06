@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import { supabase } from "../../supabaseClient";
 interface ClubFormData {
   name: string;
   description: string;
@@ -28,20 +28,21 @@ export default function ClubModal({ isOpen, onClose, onRefresh }: ClubModalProps
 
   const handleSubmit = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const userId = localStorage.getItem("userId");
-      
+      const token = localStorage.getItem("supabase_token");
+      const userId = localStorage.getItem("user_id");
+  
       if (!token || !userId) throw new Error("Not authenticated");
 
       const requestBody = {
         name: formData.name,
         description: formData.description,
         group_avatar_url: formData.avatarUrl,
+        userId: userId,
         createdBy: userId,
       };
 
   
-      const response = await fetch("http://localhost:3000/api/groups", {
+      const response = await fetch("http://localhost:3000/api/clubs", {
         method: "POST",
         headers: {
           "Content-Type": "application/json", 

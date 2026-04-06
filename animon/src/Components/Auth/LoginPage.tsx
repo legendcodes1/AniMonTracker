@@ -23,9 +23,10 @@ export default function LoginPage() {
     confirmPassword: "",
   });
 
-  const handleInputChange = (field) => (e) => {
-    setFormData((prev) => ({ ...prev, [field]: e.target.value }));
-  };
+const handleInputChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+  setFormData((prev) => ({ ...prev, [field]: e.target.value }));
+};
+
 
   const handleLogin = async (e) => {
     e.preventDefault();

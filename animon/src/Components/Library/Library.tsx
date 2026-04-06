@@ -12,8 +12,7 @@ const Library: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const token = localStorage.getItem("token")!;
-
+  const token = localStorage.getItem("supabase_token")!;
   // Fetch data based on filter
   useEffect(() => {
     const fetchData = async () => {
@@ -21,6 +20,7 @@ const Library: React.FC = () => {
       try {
         if (filter === "all") {
           const data = await fetchMediaCollection(token);
+          console.log(data)
           setCollection(data);
         } else {
           const data = await fetchLibraryByType(token, filter);

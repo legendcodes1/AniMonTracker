@@ -23,10 +23,13 @@ export const FormGroup = ({
   const handleFocus = () => setIsFocused(true);
   const handleBlur = () => setIsFocused(false);
 
-  const handleChange = (e) => {
-    setHasValue(e.target.value !== "");
-    onChange(e);
-  };
+ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const value = e.target.value;
+  setHasValue(value !== "");
+  onChange(value); 
+};
+
+
 
   return (
     <div className="relative mb-6">
