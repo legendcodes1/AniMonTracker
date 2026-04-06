@@ -59,7 +59,7 @@ export async function fetchLibraryByType(
   }
 
   const res = await fetch(
-    `http://localhost:8080/api/library/type/${type}`,
+    `http://localhost:3000/api/library/type/${type}`,
     {
       headers: { 
         Authorization: `Bearer ${token}`,
