@@ -15,13 +15,13 @@ export default function ClubCard({ id, image, badge, title, description }: ClubC
   // Check if the user is already a member
   useEffect(() => {
     const checkMembership = async () => {
-      const token = localStorage.getItem("token");
-      const userId = localStorage.getItem("userId");
+      const token = localStorage.getItem("supabase_token");
+      const userId = localStorage.getItem("user_id");
 
       if (!token || !userId) return;
 
       try {
-        const response = await fetch(`http://localhost:3000/api/groups/${id}/members`, {
+        const response = await fetch(`http://localhost:3000/api/clubs/${id}/members`, {
           headers: {
             "Authorization": `Bearer ${token}`,
           },
@@ -42,8 +42,8 @@ export default function ClubCard({ id, image, badge, title, description }: ClubC
 
   // Handle joining the group
   const handleJoinClub = async () => {
-    const token = localStorage.getItem("token");
-    const userId = localStorage.getItem("userId");
+    const token = localStorage.getItem("supabase_token");
+    const userId = localStorage.getItem("user_id");
 
     if (!token || !userId) {
       alert("Please login first!");
@@ -52,7 +52,7 @@ export default function ClubCard({ id, image, badge, title, description }: ClubC
 
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:3000/api/groups/${id}/members/${userId}`, {
+      const response = await fetch(`http://localhost:3000/api/clubs/${id}/members/${userId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
