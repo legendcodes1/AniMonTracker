@@ -50,7 +50,7 @@ const handleInputChange = (field: string) => (value: string) => {
 
       if (insertError) throw insertError;
     }
-    navigate("/");
+    navigate("/login");
   };
 
   return (

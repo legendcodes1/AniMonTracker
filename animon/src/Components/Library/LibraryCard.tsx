@@ -1,5 +1,5 @@
 import React from "react";
-import { MediaItem } from "../../types/MediaItem";
+import { MediaItem } from "../../types/Library";
 import { Star, Clock, CheckCircle, PlayCircle, Tv, Book } from "lucide-react";
 
 interface Props {
@@ -72,14 +72,14 @@ const LibraryCard: React.FC<Props> = ({ item, onClick }) => (
       </div>
     </div>
     <p className="text-slate-300 text-sm leading-relaxed">{item.description}</p>
-    <div className="flex justify-between items-center text-xs text-slate-400 mt-2">
+    {/* <div className="flex justify-between items-center text-xs text-slate-400 mt-2">
       <span>{item.genre}</span>
       <span>
         {item.type === "anime"
           ? `${item.episodes ?? 0} episodes`
           : `${item.chapters ?? 0} chapters`}
       </span>
-    </div>
+    </div> */}
   </div>
 );
 

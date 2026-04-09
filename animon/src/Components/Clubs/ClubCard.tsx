@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 interface ClubCardProps {
-  id: string;           // Group ID
+  id: string;          
   image: string;
   badge: number | string;
   title: string;
@@ -9,8 +9,8 @@ interface ClubCardProps {
 }
 
 export default function ClubCard({ id, image, badge, title, description }: ClubCardProps) {
-  const [isMember, setIsMember] = useState(false); // Track membership
-  const [loading, setLoading] = useState(false);   // Track join button loading
+  const [isMember, setIsMember] = useState(false); 
+  const [loading, setLoading] = useState(false);   
 
   // Check if the user is already a member
   useEffect(() => {

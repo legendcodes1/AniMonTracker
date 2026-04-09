@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import Navbar from "../Navbar/Navbar";
 import LibraryModal from "../Modal/MangaModel";
 import LibraryCard from "./LibraryCard";
-import { MediaItem } from "../../types/MediaItem";
-import { fetchMediaCollection, fetchLibraryByType } from "../../services/mediaService";
+import { MediaItem } from "../../types/Library";
+import { fetchMediaCollection} from "../../services/mediaService";
 
 const Library: React.FC = () => {
    const [collection, setCollection] = useState<MediaItem[]>([]);
@@ -18,14 +18,9 @@ const Library: React.FC = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        if (filter === "all") {
           const data = await fetchMediaCollection(token);
           console.log(data)
           setCollection(data);
-        } else {
-          const data = await fetchLibraryByType(token, filter);
-          setCollection(data);
-        }
       } catch (error) {
         console.error("Error fetching library:", error);
       } finally {
@@ -34,9 +29,9 @@ const Library: React.FC = () => {
     };
 
     fetchData();
-  }, [token, filter]);
+  }, [token]);
 
-  const filteredItems = collection; // Already filtered by API
+  const filteredItems = collection.filter((item) => filter === "all"  ? true : item.type === filter)
 
   return (
     <div className="min-h-screen">

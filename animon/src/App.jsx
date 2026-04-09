@@ -8,7 +8,8 @@ import Home from "./Components/MainDash/Home";
 import Clubs from "./Components/Clubs/Clubs";
 import "./App.css";
 import Register from "./Components/Auth/Register";
-
+import ClubDetailPage from  "./pages/ClubDetailPage"
+import ProfilePage from "./pages/ProfilePage"
 function App() {
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
@@ -28,11 +29,14 @@ function App() {
       <div className="relative z-10">
         <Routes>
           <Route path="/" element={<LoginPage />} /> {/* Home */}
-          <Route path="/register" element={<Register />} /> {/* Home */}
+          <Route path="/login" element={<LoginPage />} /> 
+          <Route path="/register" element={<Register />} /> 
           <Route path="/mylibrary" element={<Library />} />
           <Route path="/search" element={<SearchComponent />} />
           <Route path="/discovery" element={<Home />} />
           <Route path="/clubs" element={<Clubs />} />
+          <Route path="/clubs/:" element={<ClubDetailPage  />} /> 
+          <Route path="/profile" element={<ProfilePage />} /> 
     
         </Routes>
       </div>
