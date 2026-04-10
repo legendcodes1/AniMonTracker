@@ -13,7 +13,8 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   const handleSignOut = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("supabase_token");
+    localStorage.removeItem("user_id");
     navigate("/");
   };
 
@@ -67,7 +68,7 @@ export default function Navbar() {
               onClick={() => setActiveTab("clubs")}
               to="/clubs"
               className={`px-4 py-2 rounded-lg transition-colors ${
-                activeTab === "search"
+                activeTab === "clubs"
                   ? "bg-purple-600 text-white"
                   : "text-slate-400 hover:text-white"
               }`}

@@ -1,15 +1,15 @@
-import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import LoginPage from "./Components/Auth/LoginPage";
 import MainPage from "./Pages/MainPage";
-import Library from "./Components/Library/Library"; // ✅ create/import this component
+import Library from "./Components/Library/Library";
 import SearchComponent from "./Pages/SearchPage";
 import Home from "./Components/MainDash/Home";
 import Clubs from "./Components/Clubs/Clubs";
 import "./App.css";
 import Register from "./Components/Auth/Register";
-import ClubDetailPage from  "./pages/ClubDetailPage"
-import ProfilePage from "./pages/ProfilePage"
+import ClubDetailPage from "./pages/ClubDetailPage";
+import ProfilePage from "./pages/ProfilePage";
+import ProtectedRoute from "./Components/Auth/ProtectedRoute";
 function App() {
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
@@ -28,16 +28,15 @@ function App() {
       {/* App content */}
       <div className="relative z-10">
         <Routes>
-          <Route path="/" element={<LoginPage />} /> {/* Home */}
-          <Route path="/login" element={<LoginPage />} /> 
-          <Route path="/register" element={<Register />} /> 
-          <Route path="/mylibrary" element={<Library />} />
-          <Route path="/search" element={<SearchComponent />} />
-          <Route path="/discovery" element={<Home />} />
-          <Route path="/clubs" element={<Clubs />} />
-          <Route path="/clubs/:" element={<ClubDetailPage  />} /> 
-          <Route path="/profile" element={<ProfilePage />} /> 
-    
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/mylibrary" element={<ProtectedRoute><Library /></ProtectedRoute>} />
+          <Route path="/search" element={<ProtectedRoute><SearchComponent /></ProtectedRoute>} />
+          <Route path="/discovery" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+          <Route path="/clubs" element={<ProtectedRoute><Clubs /></ProtectedRoute>} />
+          <Route path="/clubs/:id" element={<ProtectedRoute><ClubDetailPage /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
         </Routes>
       </div>
     </div>

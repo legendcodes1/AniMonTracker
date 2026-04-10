@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { supabase } from "../../supabaseClient";
+import Loading from "../Common/Loading";
 interface ClubFormData {
   name: string;
   description: string;
@@ -18,6 +19,7 @@ export default function ClubModal({ isOpen, onClose, onRefresh }: ClubModalProps
     description: "",
     avatarUrl: ""
   });
+  const [submitting, setSubmitting] = useState(false);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -28,6 +30,7 @@ export default function ClubModal({ isOpen, onClose, onRefresh }: ClubModalProps
 
   const handleSubmit = async () => {
     try {
+      setSubmitting(true);
       const token = localStorage.getItem("supabase_token");
       const userId = localStorage.getItem("user_id");
   
@@ -70,6 +73,8 @@ export default function ClubModal({ isOpen, onClose, onRefresh }: ClubModalProps
     } catch (error) {
       console.error("Error creating a group:", error);
       alert(error instanceof Error ? error.message : "Failed to create group");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -146,17 +151,25 @@ export default function ClubModal({ isOpen, onClose, onRefresh }: ClubModalProps
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 bg-slate-600 hover:bg-slate-700 text-white py-2 px-4 rounded transition-colors"
+            disabled={submitting}
+            className="flex-1 bg-slate-600 hover:bg-slate-700 text-white py-2 px-4 rounded transition-colors disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={handleSubmit}
-            disabled={!formData.name || !formData.description}
-            className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!formData.name || !formData.description || submitting}
+            className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            Create Club
+            {submitting ? (
+              <>
+                <Loading variant="spinner" size="sm" className="text-white" />
+                Creating...
+              </>
+            ) : (
+              "Create Club"
+            )}
           </button>
         </div>
       </div>

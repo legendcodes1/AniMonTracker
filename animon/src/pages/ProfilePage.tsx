@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../Components/Navbar/Navbar";
+import Loading from "../Components/Common/Loading";
 // import ProfileStats from "../Components/Profile/ProfileStats";
 import AchievementBadge, { deriveAchievements } from "../Components/Profile/AchievementBadge";
 import { fetchMediaCollection } from "../services/mediaService";
@@ -70,7 +71,9 @@ export default function ProfilePage() {
         <section className="mb-8">
           <h2 className="text-xl font-semibold text-white mb-4">Stats</h2>
           {loading ? (
-            <p className="text-slate-400">Loading...</p>
+            <div className="flex justify-center py-8">
+              <Loading variant="spinner" size="lg" />
+            </div>
           ) : (
             // <ProfileStats stats={stats} />
             <p> test</p>

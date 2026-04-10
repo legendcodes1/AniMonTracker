@@ -1,18 +1,21 @@
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../Navbar/Navbar";
 import ClubCard from "./ClubCard";
 import ClubHeader from "./ClubHeader";
 import ClubSearch from "./ClubSearch";
 import ClubModal from "../Modal/ClubModal";
 import DemographicCard from "./DemographicCard";
+import Loading from "../Common/Loading";
 import { Swords, Skull, Heart, Smile } from "lucide-react";
 
 export default function Clubs() {
   const [currentClubs, setCurrentClubs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
 
   const fetchClubData = async () => {
     try {
+      setLoading(true);
       const token = localStorage.getItem("supabase_token");
       const response = await fetch("http://localhost:3000/api/clubs", {
         headers: {
@@ -28,6 +31,8 @@ export default function Clubs() {
       console.log(data);
     } catch (error) {
       console.log("Error fetching clubs", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -49,7 +54,11 @@ export default function Clubs() {
         <ClubSearch />
         <h2 className="text-2xl text-white p-2"> Featured Clubs</h2>
         <div className="grid grid-cols-3 mt-5 gap-5">
-          {currentClubs.length === 0 ? (
+          {loading ? (
+            <div className="flex justify-center py-10">
+              <Loading variant="spinner" size="lg" />
+            </div>
+          ) : currentClubs.length === 0 ? (
             <p className="text-slate-400"> No clubs currently</p>
           ) : (
             currentClubs

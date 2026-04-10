@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Loading from "../Common/Loading";
 
 interface ClubCardProps {
   id: string;          
@@ -10,7 +11,8 @@ interface ClubCardProps {
 
 export default function ClubCard({ id, image, badge, title, description }: ClubCardProps) {
   const [isMember, setIsMember] = useState(false); 
-  const [loading, setLoading] = useState(false);   
+  const [checkingMembership, setCheckingMembership] = useState(true);
+  const [joining, setJoining] = useState(false);   
 
   // Check if the user is already a member
   useEffect(() => {
@@ -18,7 +20,10 @@ export default function ClubCard({ id, image, badge, title, description }: ClubC
       const token = localStorage.getItem("supabase_token");
       const userId = localStorage.getItem("user_id");
 
-      if (!token || !userId) return;
+      if (!token || !userId) {
+        setCheckingMembership(false);
+        return;
+      }
 
       try {
         const response = await fetch(`http://localhost:3000/api/clubs/${id}/members`, {
@@ -34,6 +39,8 @@ export default function ClubCard({ id, image, badge, title, description }: ClubC
         }
       } catch (error) {
         console.error("Error checking membership:", error);
+      } finally {
+        setCheckingMembership(false);
       }
     };
 
@@ -50,7 +57,7 @@ export default function ClubCard({ id, image, badge, title, description }: ClubC
       return;
     }
 
-    setLoading(true);
+    setJoining(true);
     try {
       const response = await fetch(`http://localhost:3000/api/clubs/${id}/members/${userId}`, {
         method: "POST",
@@ -71,7 +78,7 @@ export default function ClubCard({ id, image, badge, title, description }: ClubC
       console.error("Error joining group:", error);
       alert(error instanceof Error ? error.message : "Failed to join group");
     } finally {
-      setLoading(false);
+      setJoining(false);
     }
   };
 
@@ -93,15 +100,19 @@ export default function ClubCard({ id, image, badge, title, description }: ClubC
             <div className="w-8 h-8 rounded-full border-2 border-slate-900 bg-slate-600" />
             <div className="w-8 h-8 rounded-full border-2 border-slate-900 bg-slate-500" />
           </div>
-          <button
-            className={`flex items-center justify-center px-4 py-2 rounded-lg text-sm font-bold transition-colors
-              ${isMember ? 'bg-green-500/20 text-green-500 cursor-not-allowed' : 'bg-blue-500/10 hover:bg-blue-500/20 text-blue-500'}
-              ${loading ? 'opacity-70 cursor-wait' : ''}`}
-            onClick={handleJoinClub}
-            disabled={isMember || loading}
-          >
-            {isMember ? "✓ Joined" : loading ? "Joining..." : "Join Circle"}
-          </button>
+          {checkingMembership ? (
+            <Loading variant="skeleton" size="sm" className="w-24 h-9" />
+          ) : (
+            <button
+              className={`flex items-center justify-center px-4 py-2 rounded-lg text-sm font-bold transition-colors
+                ${isMember ? 'bg-green-500/20 text-green-500 cursor-not-allowed' : 'bg-blue-500/10 hover:bg-blue-500/20 text-blue-500'}
+                ${joining ? 'opacity-70 cursor-wait' : ''}`}
+              onClick={handleJoinClub}
+              disabled={isMember || joining}
+            >
+              {isMember ? "✓ Joined" : joining ? "Joining..." : "Join Circle"}
+            </button>
+          )}
         </div>
       </div>
     </div>
