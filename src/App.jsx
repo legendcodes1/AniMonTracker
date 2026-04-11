@@ -1,7 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import LoginPage from "./Components/Auth/LoginPage";
 import Library from "./Components/Library/Library";
-import SearchComponent from "./Pages/SearchPage";
 import Home from "./Components/MainDash/Home";
 import Clubs from "./Components/Clubs/Clubs";
 import "./App.css";
