@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Loading from "../Common/Loading";
-
+import { Link, useNavigate } from "react-router-dom";
 interface ClubCardProps {
   id: string;          
   image: string;
@@ -13,7 +13,7 @@ export default function ClubCard({ id, image, badge, title, description }: ClubC
   const [isMember, setIsMember] = useState(false); 
   const [checkingMembership, setCheckingMembership] = useState(true);
   const [joining, setJoining] = useState(false);   
-
+  const navigate = useNavigate();
   // Check if the user is already a member
   useEffect(() => {
     const checkMembership = async () => {
@@ -81,9 +81,11 @@ export default function ClubCard({ id, image, badge, title, description }: ClubC
       setJoining(false);
     }
   };
-
+const handleViewClub = () => {
+  navigate(`/clubs/${id}`);
+};
   return (
-    <div className="bg-slate-800 rounded-xl overflow-hidden border border-slate-700 hover:shadow-xl transition-shadow">
+    <div className="bg-slate-800 rounded-xl overflow-hidden border border-slate-700 hover:shadow-xl transition-shadow" onClick={handleViewClub}>
       <div className="relative">
         <img className="w-full h-40 object-cover" src={image} alt={title} />
         <span className="absolute top-3 right-3 bg-white/20 backdrop-blur-md px-3 py-1 rounded-full text-white text-xs font-bold">
