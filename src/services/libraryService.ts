@@ -9,7 +9,7 @@ const getAuthHeaders = (): HeadersInit => {
   if (!token) {
     throw new Error('Not authenticated');
   }
-
+  
   return {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${token}`,
@@ -59,12 +59,12 @@ export const addToLibrary = async (
 };
 
 // Update library item
-export const updateLibraryItem = async (itemId: string,request: UpdateLibraryItemRequest): Promise<LibraryItem> => {
+export const updateLibraryItem = async (itemId: string, newItem: UpdateLibraryItemRequest): Promise<LibraryItem> => {
   try {
     const response = await fetch(`${API_BASE_URL}/library/${itemId}`, {
       method: 'PUT',
       headers: getAuthHeaders(),
-      body: JSON.stringify(request),
+      body: JSON.stringify(newItem),
     });
 
     if (!response.ok) {

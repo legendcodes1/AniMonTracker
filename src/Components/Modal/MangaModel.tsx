@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { MediaItem } from "../../types/Library";
-
+import {
+  getLibraryItems,
+  addToLibrary,
+  updateLibraryItem,
+  deleteLibraryItem,
+} from "../../services/libraryService";
 interface LibraryModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -9,18 +14,23 @@ interface LibraryModalProps {
 }
 
 interface FormData {
-  title: string;  
+  title: string;
   genre: string;
   image: string;
-  rating: number;           
-  notes: string;             
+  rating: number;
+  notes: string;
   status: "watching" | "completed" | "plan_to_watch" | "dropped";
   type: "manga" | "anime";
 }
 const token = localStorage.getItem("supabase_token");
 const userId = localStorage.getItem("user_id");
 
-export default function LibraryModal({ isOpen, onClose,data, onRefresh,}: LibraryModalProps) {
+export default function LibraryModal({
+  isOpen,
+  onClose,
+  data,
+  onRefresh,
+}: LibraryModalProps) {
   const [formData, setFormData] = useState<FormData>({
     title: data?.title ?? "",
     genre: data?.genre ?? "",
@@ -30,14 +40,15 @@ export default function LibraryModal({ isOpen, onClose,data, onRefresh,}: Librar
     status: data?.status ?? "watching",
     type: data?.type ?? "manga",
   });
-  console.log(data)
+  console.log(data);
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
 
   if (!isOpen) return null;
 
@@ -164,7 +175,11 @@ export default function LibraryModal({ isOpen, onClose,data, onRefresh,}: Librar
         <div className="flex gap-3">
           <button
             type="button"
-            onClick={data ? handleUpdate : handleSubmit}
+            onClick={() =>
+              data
+                ? updateLibraryItem(data.id, formData)
+                : addToLibrary(formData)
+            }
             className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded transition-colors"
           >
             {data ? "Update Item" : "Add Item"}
@@ -172,7 +187,7 @@ export default function LibraryModal({ isOpen, onClose,data, onRefresh,}: Librar
           {data && (
             <button
               type="button"
-              onClick={handleDelete}
+              onClick={() => deleteLibraryItem(data.id)}
               className="flex-1 bg-slate-600 hover:bg-slate-700 text-white py-2 px-4 rounded transition-colors"
             >
               Delete

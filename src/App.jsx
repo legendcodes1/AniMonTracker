@@ -8,6 +8,7 @@ import Register from "./Components/Auth/Register";
 import ClubDetailPage from "./pages/ClubDetailPage";
 import ProfilePage from "./pages/ProfilePage";
 import ProtectedRoute from "./Components/Auth/ProtectedRoute";
+import SearchComponent from "./pages/SearchPage"
 function App() {
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
