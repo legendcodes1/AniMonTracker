@@ -36,14 +36,12 @@ export const getLibraryItems = async (): Promise<LibraryItem[]> => {
 };
 
 // Add item to library
-export const addToLibrary = async (
-  request: CreateLibraryItemRequest
-): Promise<LibraryItem> => {
+export const addToLibrary = async (data: CreateLibraryItemRequest): Promise<LibraryItem> => {
   try {
     const response = await fetch(`${API_BASE_URL}/library`, {
       method: 'POST',
       headers: getAuthHeaders(),
-      body: JSON.stringify(request),
+      body: JSON.stringify(data),
     });
 
     if (!response.ok) {

@@ -11,7 +11,6 @@ export interface LibraryItem {
 }
 
 export interface CreateLibraryItemRequest {
-    user_id: string,
     title: string,
     type: 'anime' | 'manga';
     genre: string,

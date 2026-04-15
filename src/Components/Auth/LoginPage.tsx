@@ -1,17 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { createClient } from "@supabase/supabase-js";
 import ParticleSystem from "./ParticalSystem";
 import { FormGroup } from "../FormComponents/FormGroup";
 import { SubmitButton, TabButton } from "../FormComponents/FormButtons";
 import Login from "./Login";
 import Register from "./Register";
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY,
-);
-
+import { supabase } from "../../supabaseClient";
 export default function LoginPage() {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);

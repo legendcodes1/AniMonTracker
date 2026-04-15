@@ -2,26 +2,36 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../Components/Navbar/Navbar";
 import Loading from "../Components/Common/Loading";
-// import ProfileStats from "../Components/Profile/ProfileStats";
 import AchievementBadge, { deriveAchievements } from "../Components/Profile/AchievementBadge";
 import { fetchMediaCollection } from "../services/mediaService";
 import { MediaItem } from "../types/Library";
+import { supabase } from "../supabaseClient";
 
 export default function ProfilePage() {
   const [collection, setCollection] = useState<MediaItem[]>([]);
   const [clubs, setClubs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const username = localStorage.getItem("username") || "Otaku";
+  const [username, setUsername] = useState<string>("")
   const token = localStorage.getItem("supabase_token") || localStorage.getItem("token") || "";
   const userId = localStorage.getItem("user_id") || localStorage.getItem("userId") || "";
 
-  useEffect(() => {
+ useEffect(() => {
     const load = async () => {
       try {
+        // Fetch username
+        const { data: userData, error: userError } = await supabase
+          .from('Users')
+          .select('username')
+          .eq('id', userId)
+          .single();
+
+        if (userError) throw userError;
+        setUsername(userData?.username || "User");
+
+        // Fetch library and clubs
         const [lib, clubRes] = await Promise.all([
           fetchMediaCollection(token),
-          fetch(`http://localhost:3000/api/groups/user/${userId}`, {
+          fetch(`http://localhost:3000/api/clubs/${userId}`, {
             headers: { Authorization: `Bearer ${token}` },
           }).then((r) => (r.ok ? r.json() : [])),
         ]);
@@ -36,18 +46,6 @@ export default function ProfilePage() {
     load();
   }, [token, userId]);
 
-  const stats = {
-    totalAnime: collection.filter((i: MediaItem) => i.type === "anime").length,
-    totalManga: collection.filter((i: MediaItem) => i.type === "manga").length,
-    completed: collection.filter((i: MediaItem) => i.status === "completed").length,
-    watching: collection.filter((i: MediaItem) => i.status === "watching").length,
-    avgRating:
-      collection.length > 0
-        ? collection.reduce((sum: number, i: MediaItem) => sum + (i.rating || 0), 0) / collection.length
-        : 0,
-  };
-
-  const achievements = deriveAchievements(stats);
   const recentLibrary = collection.slice(0, 6);
 
   return (
@@ -61,14 +59,14 @@ export default function ProfilePage() {
           </div>
           <div>
             <h1 className="text-3xl font-bold text-white">{username}</h1>
-            <p className="text-slate-400 text-sm mt-1">
+            {/* <p className="text-slate-400 text-sm mt-1">
               {stats.totalAnime + stats.totalManga} titles in library
-            </p>
+            </p> */}
           </div>
         </div>
 
         {/* Stats */}
-        <section className="mb-8">
+        {/* <section className="mb-8">
           <h2 className="text-xl font-semibold text-white mb-4">Stats</h2>
           {loading ? (
             <div className="flex justify-center py-8">
@@ -78,16 +76,17 @@ export default function ProfilePage() {
             // <ProfileStats stats={stats} />
             <p> test</p>
           )}
-        </section>
+        </section> */}
 
         {/* Achievements */}
         <section className="mb-8">
           <h2 className="text-xl font-semibold text-white mb-4">Achievements</h2>
-          <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
+          <p className="text-4xl"> Coming soon</p>
+          {/* <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
             {achievements.map((a) => (
               <AchievementBadge key={a.id} achievement={a} />
             ))}
-          </div>
+          </div> */}
         </section>
 
         {/* Library Snippet */}

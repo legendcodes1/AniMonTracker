@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Navbar from "../Navbar/Navbar";
 import LibraryModal from "../Modal/MangaModel";
 import LibraryCard from "./LibraryCard";
-import { MediaItem } from "../../types/Library";
+import type { MediaItem } from "../../types/Library";
 import { fetchMediaCollection} from "../../services/mediaService";
 
 const Library: React.FC = () => {
@@ -107,7 +107,6 @@ const Library: React.FC = () => {
           isOpen={modalOpen}
           onClose={() => setModalOpen(false)}
           data={modalItem}
-          type={modalItem?.type}
           onRefresh={() => fetchMediaCollection(token).then(setCollection)}
         />
       )}

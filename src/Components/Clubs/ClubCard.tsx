@@ -14,6 +14,7 @@ export default function ClubCard({ id, image, badge, title, description }: ClubC
   const [checkingMembership, setCheckingMembership] = useState(true);
   const [joining, setJoining] = useState(false);   
   const navigate = useNavigate();
+
   // Check if the user is already a member
   useEffect(() => {
     const checkMembership = async () => {
@@ -52,10 +53,10 @@ export default function ClubCard({ id, image, badge, title, description }: ClubC
     const token = localStorage.getItem("supabase_token");
     const userId = localStorage.getItem("user_id");
 
-    if (!token || !userId) {
-      alert("Please login first!");
-      return;
-    }
+    // if (!token || !userId) {
+    //   alert("Please login first!");
+    //   return;
+    // }
 
     setJoining(true);
     try {
@@ -72,7 +73,7 @@ export default function ClubCard({ id, image, badge, title, description }: ClubC
         throw new Error(`Failed to join group: ${errorText}`);
       }
 
-      setIsMember(true); // Update UI immediately
+      setIsMember(true); 
       alert(`Successfully joined ${title}!`);
     } catch (error) {
       console.error("Error joining group:", error);

@@ -60,16 +60,17 @@ interface BadgeProps {
 
 export default function AchievementBadge({ achievement }: BadgeProps) {
   return (
-    <div
-      className={`flex flex-col items-center gap-1 p-3 rounded-xl border transition-all ${
-        achievement.unlocked
-          ? "bg-purple-500/20 border-purple-500/40 text-white"
-          : "bg-slate-800/40 border-slate-700/30 text-slate-600 grayscale opacity-50"
-      }`}
-      title={achievement.description}
-    >
-      <span className="text-2xl">{achievement.icon}</span>
-      <span className="text-xs font-medium text-center">{achievement.label}</span>
-    </div>
+    <></>
+    // <div
+    //   className={`flex flex-col items-center gap-1 p-3 rounded-xl border transition-all ${
+    //     achievement.unlocked
+    //       ? "bg-purple-500/20 border-purple-500/40 text-white"
+    //       : "bg-slate-800/40 border-slate-700/30 text-slate-600 grayscale opacity-50"
+    //   }`}
+    //   title={achievement.description}
+    // >
+    //   <span className="text-2xl">{achievement.icon}</span>
+    //   <span className="text-xs font-medium text-center">{achievement.label}</span>
+    // </div>
   );
 }

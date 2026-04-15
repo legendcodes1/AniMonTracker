@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Navbar from "../Navbar/Navbar";
+import NavbarClub from "../Navbar/NavbarClub";
 import ClubCard from "./ClubCard";
 import ClubHeader from "./ClubHeader";
 import ClubSearch from "./ClubSearch";
@@ -42,15 +42,9 @@ export default function Clubs() {
 
   return (
     <>
-      <Navbar />
+      <NavbarClub onOpenModal={() => setModalOpen(true)}/>
       <div className="max-w-6xl mx-auto mt-10">
         <ClubHeader />
-        <button
-          onClick={() => setModalOpen(true)}
-          className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded transition-colors"
-        >
-          + Create Club
-        </button>
         <ClubSearch />
         <h2 className="text-2xl text-white p-2"> Featured Clubs</h2>
         <div className="grid grid-cols-3 mt-5 gap-5">

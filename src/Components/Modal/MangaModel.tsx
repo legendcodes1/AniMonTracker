@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { MediaItem } from "../../types/Library";
+import { LibraryItem } from "../../types/Library";
 import {
   getLibraryItems,
   addToLibrary,
@@ -9,7 +9,7 @@ import {
 interface LibraryModalProps {
   isOpen: boolean;
   onClose: () => void;
-  data?: MediaItem | null;
+  data?: LibraryItem | null;
   onRefresh: () => void;
 }
 
@@ -25,12 +25,7 @@ interface FormData {
 const token = localStorage.getItem("supabase_token");
 const userId = localStorage.getItem("user_id");
 
-export default function LibraryModal({
-  isOpen,
-  onClose,
-  data,
-  onRefresh,
-}: LibraryModalProps) {
+export default function LibraryModal({ isOpen, onClose, data, onRefresh}: LibraryModalProps) {
   const [formData, setFormData] = useState<FormData>({
     title: data?.title ?? "",
     genre: data?.genre ?? "",
@@ -38,7 +33,7 @@ export default function LibraryModal({
     rating: data?.rating ?? 0,
     notes: data?.status ?? "",
     status: data?.status ?? "watching",
-    type: data?.type ?? "manga",
+    type: data?.type ?? "",
   });
   console.log(data);
   const handleInputChange = (
@@ -48,6 +43,41 @@ export default function LibraryModal({
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+    const handleSave = async () => {
+      if (!data) return;
+
+    try {
+        await updateLibraryItem(data.id, formData);
+        onRefresh();
+        onClose();
+      }  catch (error) {
+      console.error("Error:", error);
+      alert("Failed to save item.");
+    }
+  };
+
+  const handleCreate = async () => {
+    try {
+      await addToLibrary(formData)
+      onRefresh();
+      onClose();
+    } catch (error) {
+      console.error("Error:" , error)
+    }
+  }
+  const handleDelete = async () => {
+     if (!data) return;
+
+    try {
+      await deleteLibraryItem(data.id);
+      onRefresh();
+      onClose();
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Failed to delete item.");
+    }
   };
 
   if (!isOpen) return null;
@@ -177,8 +207,8 @@ export default function LibraryModal({
             type="button"
             onClick={() =>
               data
-                ? updateLibraryItem(data.id, formData)
-                : addToLibrary(formData)
+                ? handleSave()
+                : handleCreate()
             }
             className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded transition-colors"
           >
@@ -187,7 +217,7 @@ export default function LibraryModal({
           {data && (
             <button
               type="button"
-              onClick={() => deleteLibraryItem(data.id)}
+              onClick={() => handleDelete()}
               className="flex-1 bg-slate-600 hover:bg-slate-700 text-white py-2 px-4 rounded transition-colors"
             >
               Delete

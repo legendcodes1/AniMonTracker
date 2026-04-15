@@ -8,7 +8,10 @@ import {
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-export default function Navbar() {
+interface NavbarProps {
+    onOpenModal : () => void;
+}
+export default function NavbarClub({onOpenModal}: NavbarProps ) {
   const [activeTab, setActiveTab] = useState("home");
   const navigate = useNavigate();
 
@@ -64,7 +67,7 @@ export default function Navbar() {
             >
               Discovery
             </Link>
-                  <Link
+                  {/* <Link
               onClick={() => setActiveTab("clubs")}
               to="/clubs"
               className={`px-4 py-2 rounded-lg transition-colors ${
@@ -74,7 +77,7 @@ export default function Navbar() {
               }`}
             >
               Clubs
-            </Link>
+            </Link> */}
             <button
               onClick={handleSignOut}
               className="text-slate-400 hover:text-white px-4 py-2 rounded-lg transition-colors"
@@ -84,20 +87,8 @@ export default function Navbar() {
           </nav>
           <div className="flex justify-between">
               <div> 
-                <Link>
-                   <Bell />
-                </Link>
+                <button className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded transition-colors" onClick={onOpenModal}> Create Club</button>
               </div>
-              <div> 
-                <Link>
-                   <MessageSquare />
-                </Link>
-            </div>
-            <div> 
-                  <Link to="/profile">
-                   <CircleUserRound />
-                  </Link>
-                </div>
           </div>
         </div>
       </div>

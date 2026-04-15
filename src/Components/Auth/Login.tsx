@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { createClient } from "@supabase/supabase-js";
-// Create a single supabase client for interacting with your database
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY,
-);
+import { supabase } from "../../supabaseClient";
 import ParticleSystem from "./ParticalSystem";
 import { SubmitButton } from "./SubmitButton";
 import { FormGroup } from "../FormComponents/FormGroup";
@@ -47,6 +43,7 @@ export default function Login() {
 
   return (
     <form onSubmit={handleLogin}>
+
       <FormGroup
         label="Email"
         type="email"

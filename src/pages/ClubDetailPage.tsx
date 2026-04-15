@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Plus, Settings, Vote, Users, MessageSquare, Trash2, UserPlus } from "lucide-react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 export default function ClubDetailPage() {
   const { id } = useParams();
@@ -78,9 +78,13 @@ export default function ClubDetailPage() {
                 </button>
               </>
             ) : (
+              <div className=""> 
               <button className="bg-[#3b82f6] hover:bg-[#2563eb] px-10 py-3 rounded-lg font-bold text-lg shadow-lg shadow-blue-500/20 transition-all">
                 Join Circle
               </button>
+
+              <Link to="/clubs" className="bg-[#3b82f6] hover:bg-[#2563eb] px-10 py-3 rounded-lg font-bold text-lg shadow-lg shadow-blue-500/20 transition-all ml-5"> View Clubs</Link>
+              </div>
             )}
           </div>
         </div>

@@ -9,7 +9,6 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_ANON_KEY,
 );
 
-
 export default function Register() {
   const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(true);
@@ -21,12 +20,11 @@ export default function Register() {
     confirmPassword: "",
   });
 
-const handleInputChange = (field: string) => (value: string) => {
-  setFormData((prev) => ({ ...prev, [field]: value }));
-};
+  const handleInputChange = (field: string) => (value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
-
-  const handleRegister = async (e:any) => {
+  const handleRegister = async (e: any) => {
     e.preventDefault();
     const { data, error } = await supabase.auth.signUp({
       email: formData.email,
@@ -37,16 +35,14 @@ const handleInputChange = (field: string) => (value: string) => {
       console.log(error);
     }
 
-     if (data.user) {
-      const { error: insertError } = await supabase
-        .from('Users')
-        .insert([
-          {
-            id: data.user.id,
-            username: formData.username,
-            email: formData.email,
-          }
-        ]);
+    if (data.user) {
+      const { error: insertError } = await supabase.from("Users").insert([
+        {
+          id: data.user.id,
+          username: formData.username,
+          email: formData.email,
+        },
+      ]);
 
       if (insertError) throw insertError;
     }
@@ -55,6 +51,14 @@ const handleInputChange = (field: string) => (value: string) => {
 
   return (
     <form onSubmit={handleRegister}>
+      <FormGroup
+        label="Username"
+        type="username"
+        placeholder="Enter your desired username"
+        value={formData.username}
+        onChange={handleInputChange("username")}
+        required
+      />
       <FormGroup
         label="Email"
         type="email"
@@ -83,7 +87,7 @@ const handleInputChange = (field: string) => (value: string) => {
           required
         />
       )}
-       <SubmitButton loading={false}>Register </SubmitButton>
+      <SubmitButton loading={false}>Register </SubmitButton>
     </form>
   );
 }
