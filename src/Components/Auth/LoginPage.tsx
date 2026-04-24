@@ -71,7 +71,7 @@ const handleInputChange = (field: string) => (e: React.ChangeEvent<HTMLInputElem
               Animon
             </h1>
             <p className="text-gray-400 text-sm opacity-80">
-              Track your anime & manga journey
+              Track your anime & manga journey and meet new friends
             </p>
           </div>
 
