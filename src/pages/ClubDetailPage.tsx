@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Plus, Settings, Vote, Users, MessageSquare, Trash2, UserPlus, Loader2, Heart, Send, MoreHorizontal, Calendar, MessageCircle, Sparkles, Leave, Crown } from "lucide-react";
+import { Plus, Settings, Vote, Users, MessageSquare, Trash2, UserPlus, Loader2, Heart, Send, MoreHorizontal, Calendar, MessageCircle, Sparkles, Crown } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 
 export default function ClubDetailPage() {
