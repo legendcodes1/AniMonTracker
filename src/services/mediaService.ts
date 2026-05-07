@@ -32,6 +32,10 @@ export async function fetchMediaCollection(token: string): Promise<MediaItem[]> 
       rating: item.rating || 0,
       notes: item.notes || "",
       addedAt: item.addedAt,
+      episodes: item.episodes || 0,
+      chapters: item.chapters || 0,
+      currentEpisode: item.currentEpisode || 0,
+      currentChapter: item.currentChapter || 0,
     }));
 
     return items;

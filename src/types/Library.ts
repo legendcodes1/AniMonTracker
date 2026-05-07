@@ -10,6 +10,13 @@ export interface LibraryItem {
   genre?: string; 
 }
 
+export interface MediaItem extends LibraryItem {
+  episodes?: number;
+  chapters?: number;
+  currentEpisode?: number;
+  currentChapter?: number;
+}
+
 export interface CreateLibraryItemRequest {
     title: string,
     type: 'anime' | 'manga';
