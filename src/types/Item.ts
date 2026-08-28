@@ -1,11 +1,12 @@
-export type MediaType = "anime" | "manga";
-
 export interface Item {
-  id: number;
+  id: string | number;
   title: string;
-  type: MediaType;
-  rating: number;
+  type: "anime" | "manga";
+  rating?: number;
   image: string;
-  status: "completed" | "ongoing" | "upcoming";
-  description: string;
+  status: string;
+  description?: string;
+  genre?: string;
+  episodes?: number;
+  chapters?: number;
 }

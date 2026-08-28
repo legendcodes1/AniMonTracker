@@ -1,47 +1,23 @@
-import { MediaItem } from "../types/Library";
+import { MediaItem } from "../types/library";
+import { getLibraryItems } from "./libraryService";
 
-export async function fetchMediaCollection(token: string): Promise<MediaItem[]> {
-    const userId = localStorage.getItem("user_id");
-  
-  if (!userId) {
-    throw new Error("User ID not found");
-  }
+export async function fetchMediaCollection(token?: string): Promise<MediaItem[]> {
+  const userId = localStorage.getItem("user_id") || undefined;
+  const items = await getLibraryItems(userId);
 
-  try {
-    const res = await fetch(
-      `http://localhost:3000/api/library?user_id=${userId}`,
-      {
-        headers: { 
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-      }
-    );
-
-    if (!res.ok) {
-      throw new Error(`Failed to fetch library: ${res.statusText}`);
-    }
-
-    const data = await res.json();
-    const items: MediaItem[] = (Array.isArray(data) ? data : []).map((item) => ({
-      id: item.id,
-      title: item.title,
-      type: item.type, // "anime" or "manga"
-      status: item.status, // "watching", "completed", etc.
-      image: item.image || "https://via.placeholder.com/300x400?text=No+Image",
-      rating: item.rating || 0,
-      notes: item.notes || "",
-      addedAt: item.addedAt,
-      episodes: item.episodes || 0,
-      chapters: item.chapters || 0,
-      currentEpisode: item.currentEpisode || 0,
-      currentChapter: item.currentChapter || 0,
-    }));
-
-    return items;
-  } catch (error) {
-    console.error("Error fetching library:", error);
-    throw error;
-  }
+  return items.map((item) => ({
+    id: item.id,
+    title: item.title,
+    type: item.type || "anime",
+    status: item.status || "watching",
+    image: item.image || "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=400",
+    rating: item.rating || 0,
+    notes: item.notes || "",
+    addedAt: item.addedAt || new Date().toISOString(),
+    genre: item.genre || "General",
+    episodes: item.episodes || 0,
+    chapters: item.chapters || 0,
+    currentEpisode: item.currentEpisode || 0,
+    currentChapter: item.currentChapter || 0,
+  }));
 }
-

@@ -1,100 +1,41 @@
-import type { LibraryItem, CreateLibraryItemRequest, UpdateLibraryItemRequest } from '../types/library.ts';
-
-const API_BASE_URL = 'http://localhost:3000/api';
-
-// Helper to get auth headers
-const getAuthHeaders = (): HeadersInit => {
-  const token = localStorage.getItem('supabase_token');
-  
-  if (!token) {
-    throw new Error('Not authenticated');
-  }
-  
-  return {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`,
-  };
-};
+import { apiClient } from "../lib/apiClient";
+import type { LibraryItem, CreateLibraryItemRequest, UpdateLibraryItemRequest } from "../types/library";
 
 // Get all library items for current user
-export const getLibraryItems = async (): Promise<LibraryItem[]> => {
+export const getLibraryItems = async (userId?: string): Promise<LibraryItem[]> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/library`, {
-      method: 'GET',
-      headers: getAuthHeaders(),
+    const data = await apiClient<LibraryItem[]>("/library", {
+      params: userId ? { user_id: userId } : undefined,
     });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch library items');
-    }
-
-    return await response.json();
+    return Array.isArray(data) ? data : [];
   } catch (error) {
-    console.error('Error fetching library items:', error);
-    throw error;
+    console.warn("API library fetch failed, returning empty list:", error);
+    return [];
   }
 };
 
 // Add item to library
 export const addToLibrary = async (data: CreateLibraryItemRequest): Promise<LibraryItem> => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/library`, {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Failed to add to library: ${errorText}`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error('Error adding to library:', error);
-    throw error;
-  }
+  return await apiClient<LibraryItem>("/library", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
 };
 
 // Update library item
-export const updateLibraryItem = async (itemId: string, newItem: UpdateLibraryItemRequest): Promise<LibraryItem> => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/library/${itemId}`, {
-      method: 'PUT',
-      headers: getAuthHeaders(),
-      body: JSON.stringify(newItem),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Failed to update library item: ${errorText}`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    console.error('Error updating library item:', error);
-    throw error;
-  }
+export const updateLibraryItem = async (
+  itemId: string,
+  newItem: UpdateLibraryItemRequest
+): Promise<LibraryItem> => {
+  return await apiClient<LibraryItem>(`/library/${itemId}`, {
+    method: "PUT",
+    body: JSON.stringify(newItem),
+  });
 };
 
 // Delete library item
 export const deleteLibraryItem = async (itemId: string): Promise<void> => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/library/${itemId}`, {
-      method: 'DELETE',
-      headers: getAuthHeaders(),
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to delete library item');
-    }
-
-    // DELETE typically returns no content
-    if (response.status !== 204) {
-      return await response.json();
-    }
-  } catch (error) {
-    console.error('Error deleting library item:', error);
-    throw error;
-  }
+  await apiClient(`/library/${itemId}`, {
+    method: "DELETE",
+  });
 };

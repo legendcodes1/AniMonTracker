@@ -1,38 +1,47 @@
+export type MediaType = "anime" | "manga";
+export type MediaStatus = "watching" | "completed" | "plan_to_watch" | "dropped" | "on_hold";
+
 export interface LibraryItem {
-  id: string; 
-  title: string; 
-  type: "anime" | "manga";
-  status: "watching" | "completed" | "plan_to_watch" | "dropped";
-  image: string; 
+  id: string;
+  title: string;
+  type: MediaType;
+  status: MediaStatus;
+  image: string;
   rating?: number;
   notes?: string;
   addedAt?: string;
-  genre?: string; 
-}
-
-export interface MediaItem extends LibraryItem {
+  genre?: string;
   episodes?: number;
   chapters?: number;
   currentEpisode?: number;
   currentChapter?: number;
 }
 
+export type MediaItem = LibraryItem;
+
 export interface CreateLibraryItemRequest {
-    title: string,
-    type: 'anime' | 'manga';
-    genre: string,
-    image?: string,
-    status?: 'watching' | 'completed' | 'plan_to_watch' | 'dropped';
-    notes?: string,
-    rating?: number,
+  animeId?: string;
+  title: string;
+  type: MediaType;
+  genre?: string;
+  image?: string;
+  status?: MediaStatus;
+  notes?: string;
+  rating?: number;
+  totalEpisodes?: number;
+  totalChapters?: number;
+  currentEpisode?: number;
+  currentChapter?: number;
 }
 
 export interface UpdateLibraryItemRequest {
   title?: string;
-  type?: 'anime' | 'manga';
+  type?: MediaType;
   genre?: string;
   image?: string;
-  status?: 'watching' | 'completed' | 'plan_to_watch' | 'dropped';
+  status?: MediaStatus;
   notes?: string;
   rating?: number;
+  currentEpisode?: number;
+  currentChapter?: number;
 }

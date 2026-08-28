@@ -75,13 +75,6 @@ export default function Clubs() {
                   </div>
                 </div>
               </div>
-              <button
-                onClick={() => setModalOpen(true)}
-                className="shrink-0 px-6 py-4 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 rounded-xl font-bold text-lg shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 transition-all flex items-center gap-2"
-              >
-                <Plus className="w-5 h-5" />
-                Create Club
-              </button>
             </div>
           </div>
 
@@ -129,7 +122,7 @@ export default function Clubs() {
           </div>
 
           {/* Browse by Demographics */}
-          <div className="mb-10">
+          {/* <div className="mb-10">
             <h2 className="text-2xl font-bold text-white flex items-center gap-3 mb-6">
               <span className="w-1 h-8 bg-gradient-to-b from-blue-500 to-cyan-500 rounded-full" />
               Browse by Genre
@@ -165,7 +158,7 @@ export default function Clubs() {
                 iconColor="text-amber-400"
               />
             </div>
-          </div>
+          </div> */}
 
           {/* Popular Clubs Section */}
           <div className="mb-10">
