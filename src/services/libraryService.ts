@@ -1,0 +1,97 @@
+import type { LibraryItem, CreateLibraryItemRequest, UpdateLibraryItemRequest } from '../types/library.ts';
+const baseApi = import.meta.env.VITE_API_BASE_URL;
+// Helper to get auth headers
+const getAuthHeaders = (): HeadersInit => {
+  const token = localStorage.getItem('supabase_token');
+  
+  if (!token) {
+    throw new Error('Not authenticated');
+  }
+  
+  return {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`,
+  };
+};
+
+// Get all library items for current user
+export const getLibraryItems = async (): Promise<LibraryItem[]> => {
+  try {
+    const response = await fetch(`${baseApi}/library`, {
+      method: 'GET',
+      headers: getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch library items');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching library items:', error);
+    throw error;
+  }
+};
+
+// Add item to library
+export const addToLibrary = async (data: CreateLibraryItemRequest): Promise<LibraryItem> => {
+  try {
+    const response = await fetch(`${baseApi}/library`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to add to library: ${errorText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error adding to library:', error);
+    throw error;
+  }
+};
+
+// Update library item
+export const updateLibraryItem = async (itemId: string, newItem: UpdateLibraryItemRequest): Promise<LibraryItem> => {
+  try {
+    const response = await fetch(`${baseApi}/library/${itemId}`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(newItem),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to update library item: ${errorText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error updating library item:', error);
+    throw error;
+  }
+};
+
+// Delete library item
+export const deleteLibraryItem = async (itemId: string): Promise<void> => {
+  try {
+    const response = await fetch(`${baseApi}/library/${itemId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete library item');
+    }
+
+    if (response.status !== 204) {
+      return await response.json();
+    }
+  } catch (error) {
+    console.error('Error deleting library item:', error);
+    throw error;
+  }
+};
