@@ -24,4 +24,13 @@ dist-ssr
 *.sw?
 
 .vercel
+
+# Environment files (never commit real values, only .env.example)
 .env
+.env.*
+!.env.example
+
+# Test and build artifacts
+coverage
+*.tsbuildinfo
+build
