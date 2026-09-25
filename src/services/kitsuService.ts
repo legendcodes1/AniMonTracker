@@ -1,4 +1,4 @@
-import { KitsuResponse, KitsuAnime, SearchResult } from '../types/kitsu';
+import type { KitsuResponse, KitsuAnime, SearchResult } from "@/types/kitsu";
 
 const KITSU_BASE_URL = 'https://kitsu.io/api/edge';
 

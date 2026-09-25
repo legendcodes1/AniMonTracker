@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Search, Filter, X, Plus, Check } from "lucide-react";
-import Navbar from "../Components/Navbar/Navbar";
-import { searchAnimeOrManga } from "../services/kitsuService";
-import { addToLibrary } from "../services/libraryService";
-import { SearchResult } from "../types/kitsu";
+import Navbar from "@/components/Navbar/Navbar";
+import { searchAnimeOrManga } from "@/services/kitsuService";
+import { addSearchResultToLibrary } from "@/services/libraryService";
+import type { SearchResult } from "@/types/kitsu";
 
 export default function SearchComponent() {
   const [query, setQuery] = useState("");
@@ -33,7 +33,7 @@ export default function SearchComponent() {
 
   const handleAddToLibrary = async (item: SearchResult) => {
     try {
-      await addToLibrary({
+      await addSearchResultToLibrary({
         animeId: item.id,
         animeTitle: item.title,
         type: item.type,

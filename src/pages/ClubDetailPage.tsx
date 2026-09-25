@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Plus, Settings, Vote, Users, MessageSquare, Trash2, UserPlus, Loader2, Heart, Send, MoreHorizontal, Calendar, MessageCircle, Sparkles, Crown } from "lucide-react";
+import { Plus, Settings, Users, MessageSquare, UserPlus, Loader2, Heart, Send, MoreHorizontal, Calendar, MessageCircle, Sparkles, Crown, LogOut } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 const baseApi = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, "");
 
@@ -236,7 +236,7 @@ export default function ClubDetailPage() {
                       onClick={handleLeaveClub}
                       className="bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 px-4 py-3 rounded-xl font-bold text-red-400 flex items-center gap-2 transition-all"
                     >
-                      <Leave size={18} />
+                      <LogOut size={18} />
                     </button>
                   </div>
                 ) : (

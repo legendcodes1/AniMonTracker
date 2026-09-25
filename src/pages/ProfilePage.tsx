@@ -1,17 +1,14 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Navbar from "../Components/Navbar/Navbar";
-import Loading from "../Components/Common/Loading";
-import AchievementBadge, { deriveAchievements } from "../Components/Profile/AchievementBadge";
-import { fetchMediaCollection } from "../services/mediaService";
-import { MediaItem } from "../types/Library";
-import { supabase } from "../supabaseClient";
+import Navbar from "@/components/Navbar/Navbar";
+import { fetchMediaCollection } from "@/services/mediaService";
+import type { MediaItem } from "@/types/library";
+import { supabase } from "@/lib/supabase";
 const baseApi = import.meta.env.VITE_API_BASE_URL;
 
 export default function ProfilePage() {
   const [collection, setCollection] = useState<MediaItem[]>([]);
   const [clubs, setClubs] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState<string>("")
   const token = localStorage.getItem("supabase_token") || localStorage.getItem("token") || "";
   const userId = localStorage.getItem("user_id") || localStorage.getItem("userId") || "";
@@ -40,8 +37,6 @@ export default function ProfilePage() {
         setClubs(Array.isArray(clubRes) ? clubRes : []);
       } catch (e) {
         console.error(e);
-      } finally {
-        setLoading(false);
       }
     };
     load();

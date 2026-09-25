@@ -1,4 +1,4 @@
-import { MediaItem } from "../types/Library";
+import type { MediaItem } from "@/types/library";
 const baseApi = import.meta.env.VITE_API_BASE_URL;
 
 export async function fetchMediaCollection(token: string): Promise<MediaItem[]> {

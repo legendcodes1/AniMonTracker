@@ -1,4 +1,4 @@
-import type { LibraryItem, CreateLibraryItemRequest, UpdateLibraryItemRequest } from '../types/library.ts';
+import type { LibraryItem, CreateLibraryItemRequest, UpdateLibraryItemRequest, AddSearchResultToLibraryRequest } from "@/types/library";
 const baseApi = import.meta.env.VITE_API_BASE_URL;
 // Helper to get auth headers
 const getAuthHeaders = (): HeadersInit => {
@@ -35,6 +35,29 @@ export const getLibraryItems = async (): Promise<LibraryItem[]> => {
 
 // Add item to library
 export const addToLibrary = async (data: CreateLibraryItemRequest): Promise<LibraryItem> => {
+  try {
+    const response = await fetch(`${baseApi}/library`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to add to library: ${errorText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error adding to library:', error);
+    throw error;
+  }
+};
+
+// Add a Kitsu search result to library
+export const addSearchResultToLibrary = async (
+  data: AddSearchResultToLibraryRequest,
+): Promise<LibraryItem> => {
   try {
     const response = await fetch(`${baseApi}/library`, {
       method: 'POST',
