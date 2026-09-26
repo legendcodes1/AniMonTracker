@@ -1,6 +1,8 @@
 import { useState } from "react";
+import type { ChangeEvent } from "react";
 import Loading from "../Common/Loading";
-const baseApi = import.meta.env.VITE_API_BASE_URL;
+import { createClub } from "@/services/clubService";
+import { useAuth } from "@/providers/AuthContext";
 interface ClubFormData {
   name: string;
   description: string;
@@ -20,9 +22,10 @@ export default function ClubModal({ isOpen, onClose, onRefresh }: ClubModalProps
     avatarUrl: ""
   });
   const [submitting, setSubmitting] = useState(false);
+  const { user } = useAuth();
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -31,36 +34,18 @@ export default function ClubModal({ isOpen, onClose, onRefresh }: ClubModalProps
   const handleSubmit = async () => {
     try {
       setSubmitting(true);
-      const token = localStorage.getItem("supabase_token");
-      const userId = localStorage.getItem("user_id");
-  
-      if (!token || !userId) throw new Error("Not authenticated");
 
-      const requestBody = {
+      if (!user) throw new Error("Not authenticated");
+
+      const created = await createClub({
         name: formData.name,
         description: formData.description,
         group_avatar_url: formData.avatarUrl,
-        userId: userId,
-        createdBy: userId,
-      };
-
-  
-      const response = await fetch(`${baseApi}/api/clubs`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json", 
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify(requestBody),
+        userId: user.id,
+        createdBy: user.id,
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to create group: ${errorText}`);
-      }
-
-      const data = await response.json();
-      console.log("Group created:", data);
+      console.log("Group created:", created);
 
       setFormData({
         name: "",

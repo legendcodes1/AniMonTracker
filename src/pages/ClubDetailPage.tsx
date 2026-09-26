@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Plus, Settings, Users, MessageSquare, UserPlus, Loader2, Heart, Send, MoreHorizontal, Calendar, MessageCircle, Sparkles, Crown, LogOut } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
-const baseApi = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, "");
+import { checkMembership, fetchClubById, joinClub, leaveClub } from "@/services/clubService";
+import { useAuth } from "@/providers/AuthContext";
 
 export default function ClubDetailPage() {
   const { id } = useParams();
@@ -14,101 +15,75 @@ export default function ClubDetailPage() {
   const [joining, setJoining] = useState(false);
   const [activeTab, setActiveTab] = useState<"discussions" | "members" | "about">("discussions");
   const [postContent, setPostContent] = useState("");
+  const { user } = useAuth();
 
   useEffect(() => {
-    const fetchClubDetails = async () => {
-      const token = localStorage.getItem("supabase_token");
-      const userId = localStorage.getItem("user_id");
-      
-      if (!token) {
-        setError("Not authenticated");
-        setLoading(false);
+    let active = true;
+
+    const loadClub = async () => {
+      if (!user) {
+        if (active) {
+          setError("Not authenticated");
+          setLoading(false);
+        }
         return;
       }
 
       try {
-        setCurrentUserId(userId);
-        
-        const response = await fetch(`${baseApi}/api/clubs/${id}`, {
-          headers: { "Authorization": `Bearer ${token}` },
-        });
-
-        if (!response.ok) throw new Error("Failed to fetch club");
-        const data = await response.json();
-        const clubData = Array.isArray(data) ? data[0] : data;
-        setClub(clubData);
+        if (active) setCurrentUserId(user.id);
+        const clubData = await fetchClubById(String(id));
+        if (active) setClub(clubData);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Error fetching club");
+        if (active) setError(err instanceof Error ? err.message : "Error fetching club");
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     };
 
-    fetchClubDetails();
-  }, [id]);
+    void loadClub();
+
+    return () => {
+      active = false;
+    };
+  }, [id, user]);
 
   useEffect(() => {
-    const checkMembership = async () => {
-      const token = localStorage.getItem("supabase_token");
-      const userId = localStorage.getItem("user_id");
+    let active = true;
 
-      if (!token || !userId || !id) {
-        setCheckingMembership(false);
+    const loadMembership = async () => {
+      if (!user || !id) {
+        if (active) setCheckingMembership(false);
         return;
       }
 
       try {
-        const response = await fetch(
-          `${baseApi}/api/clubs/${id}/members/${userId}`,
-          {
-            method: "GET",
-            headers: { "Authorization": `Bearer ${token}` },
-          },
-        );
-
-        if (response.ok) {
-          const result = await response.json();
-          setIsMember(result.isMember || false);
-        }
+        const { isMember } = await checkMembership(String(id), user.id);
+        if (active) setIsMember(isMember);
       } catch (error) {
         console.error("Error checking membership:", error);
       } finally {
-        setCheckingMembership(false);
+        if (active) setCheckingMembership(false);
       }
     };
 
     if (club) {
-      checkMembership();
+      void loadMembership();
     }
-  }, [club, id]);
+
+    return () => {
+      active = false;
+    };
+  }, [club, id, user]);
 
   const handleJoinClub = async () => {
-    const token = localStorage.getItem("supabase_token");
-    const userId = localStorage.getItem("user_id");
-
-    if (!token || !userId) {
+    if (!user) {
       alert("Please login first!");
       return;
     }
 
     setJoining(true);
     try {
-      const response = await fetch(
-        `${baseApi}/api/clubs/${id}/members/${userId}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
-        },
-      );
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to join group: ${errorText}`);
-      }
-
+      await joinClub(String(id), user.id);
       setIsMember(true);
     } catch (error) {
       console.error("Error joining group:", error);
@@ -120,25 +95,13 @@ export default function ClubDetailPage() {
 
   const handleLeaveClub = async () => {
     if (!confirm("Are you sure you want to leave this club?")) return;
-    
-    const token = localStorage.getItem("supabase_token");
-    const userId = localStorage.getItem("user_id");
 
-    if (!token || !userId) return;
+    if (!user) return;
 
     try {
-      const response = await fetch(
-        `${baseApi}/api/clubs/${id}/members/${userId}`,
-        {
-          method: "DELETE",
-          headers: { "Authorization": `Bearer ${token}` },
-        },
-      );
-
-      if (response.ok) {
-        setIsMember(false);
-        window.location.href = "/clubs";
-      }
+      await leaveClub(String(id), user.id);
+      setIsMember(false);
+      window.location.href = "/clubs";
     } catch (error) {
       console.error("Error leaving club:", error);
       alert("Failed to leave club");

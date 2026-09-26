@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import Loading from "../Common/Loading";
 import { useNavigate } from "react-router-dom";
 import { Users, TrendingUp, UserPlus, Check } from "lucide-react";
-const baseApi = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, "");
+import { checkMembership, joinClub } from "@/services/clubService";
+import { useAuth } from "@/providers/AuthContext";
 
 interface ClubCardProps {
   id: string;
@@ -23,74 +24,46 @@ export default function ClubCard({
   const [checkingMembership, setCheckingMembership] = useState(true);
   const [joining, setJoining] = useState(false);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
-    const checkMembership = async () => {
-      const token = localStorage.getItem("supabase_token");
-      const userId = localStorage.getItem("user_id");
+    let active = true;
 
-      if (!token || !userId) {
+    const loadMembership = async () => {
+      if (!user) {
         setCheckingMembership(false);
         return;
       }
 
       try {
-        const response = await fetch(
-          `${baseApi}/api/clubs/${id}/members/${userId}`,
-          {
-            method: "GET",
-            headers: {
-              "Authorization": `Bearer ${token}`,
-            },
-          },
-        );
-        
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error("Backend error:", errorText);
-          throw new Error(`Failed to check membership: ${errorText}`);
-        }
-
-        const result = await response.json();
-        setIsMember(result.isMember || false);
+        const { isMember } = await checkMembership(id, user.id);
+        if (active) setIsMember(isMember);
       } catch (error) {
         console.error("Error checking membership:", error);
-        setIsMember(false);
+        if (active) setIsMember(false);
       } finally {
-        setCheckingMembership(false);
+        if (active) setCheckingMembership(false);
       }
     };
 
-    checkMembership();
-  }, [id]);
+    void loadMembership();
+
+    return () => {
+      active = false;
+    };
+  }, [id, user]);
 
   const handleJoinClub = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    const token = localStorage.getItem("supabase_token");
-    const userId = localStorage.getItem("user_id");
 
-    if (!token || !userId) {
+    if (!user) {
       alert("Please login first!");
       return;
     }
 
     setJoining(true);
     try {
-      const response = await fetch(
-        `${baseApi}/api/clubs/${id}/members/${userId}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
-        },
-      );
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to join group: ${errorText}`);
-      }
-
+      await joinClub(id, user.id);
       setIsMember(true);
     } catch (error) {
       console.error("Error joining group:", error);

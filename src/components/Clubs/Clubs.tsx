@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import NavbarClub from "../Navbar/NavbarClub";
 import ClubCard from "./ClubCard";
 import ClubSearch from "./ClubSearch";
@@ -6,59 +6,11 @@ import ClubModal from "../Modal/ClubModal";
 import DemographicCard from "./DemographicCard";
 import Loading from "../Common/Loading";
 import { Swords, Skull, Heart, Smile, Sparkles, Users, ArrowRight } from "lucide-react";
-const baseApi = import.meta.env.VITE_API_BASE_URL as string | undefined;
+import { useClubs } from "@/hooks/useClubs";
 
 export default function Clubs() {
-  const [currentClubs, setCurrentClubs] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { clubs: currentClubs, loading, refresh: fetchClubData } = useClubs();
   const [modalOpen, setModalOpen] = useState(false);
-
-  const fetchClubData = async () => {
-    try {
-      setLoading(true);
-
-      if (!baseApi) {
-        throw new Error("VITE_API_BASE_URL is not configured");
-      }
-
-      const token = localStorage.getItem("supabase_token");
-      const response = await fetch(`${baseApi.replace(/\/$/, "")}/api/clubs`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        const errorBody = await response.text();
-        throw new Error(
-          `Failed to fetch clubs (${response.status} ${response.statusText}): ${errorBody.slice(0, 200)}`,
-        );
-      }
-
-      const contentType = response.headers.get("content-type") ?? "";
-      if (!contentType.toLowerCase().includes("json")) {
-        const responseBody = await response.text();
-        throw new Error(
-          `Clubs endpoint returned ${contentType || "an unknown content type"}: ${responseBody.slice(0, 200)}`,
-        );
-      }
-
-      const data: unknown = await response.json();
-      if (!Array.isArray(data)) {
-        throw new Error("Clubs endpoint returned an unexpected response");
-      }
-
-      setCurrentClubs(data);
-    } catch (error) {
-      console.error("Error fetching clubs", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchClubData();
-  }, []);
 
   return (
     <div className="min-h-screen bg-slate-900">

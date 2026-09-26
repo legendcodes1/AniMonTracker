@@ -1,61 +1,8 @@
 import { Plus } from "lucide-react";
-import { useEffect, useState } from "react";
-const baseApi = import.meta.env.VITE_API_BASE_URL as string | undefined;
+import { useClubs } from "@/hooks/useClubs";
 
 export default function ActiveClubs() {
-  const [clubData, setClubData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  const fetchClubData = async () => {
-    try {
-      setLoading(true);
-
-      if (!baseApi) {
-        throw new Error("VITE_API_BASE_URL is not configured");
-      }
-
-      const token = localStorage.getItem("supabase_token");
-      if (!token) {
-        throw new Error("Not authenticated");
-      }
-
-      const response = await fetch(`${baseApi.replace(/\/$/, "")}/api/clubs`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        const errorBody = await response.text();
-        throw new Error(
-          `Failed to fetch clubs (${response.status} ${response.statusText}): ${errorBody.slice(0, 200)}`,
-        );
-      }
-
-      const contentType = response.headers.get("content-type") ?? "";
-      if (!contentType.toLowerCase().includes("json")) {
-        const responseBody = await response.text();
-        throw new Error(
-          `Clubs endpoint returned ${contentType || "an unknown content type"}: ${responseBody.slice(0, 200)}`,
-        );
-      }
-
-      const data: unknown = await response.json();
-      if (!Array.isArray(data)) {
-        throw new Error("Clubs endpoint returned an unexpected response");
-      }
-
-      setClubData(data);
-    } catch (error) {
-      console.error("Error fetching clubs", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchClubData();
-  }, []); // 
+  const { clubs: clubData, loading } = useClubs();
 
   return (
     <div className="bg-slate-800 rounded-2xl p-6 w-80">

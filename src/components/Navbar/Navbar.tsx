@@ -7,14 +7,15 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/providers/AuthContext";
 
 export default function Navbar() {
   const [activeTab, setActiveTab] = useState("home");
   const navigate = useNavigate();
+  const { signOut } = useAuth();
 
-  const handleSignOut = () => {
-    localStorage.removeItem("supabase_token");
-    localStorage.removeItem("user_id");
+  const handleSignOut = async () => {
+    await signOut();
     navigate("/");
   };
 

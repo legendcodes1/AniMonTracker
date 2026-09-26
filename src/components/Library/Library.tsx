@@ -5,6 +5,7 @@ import LibraryCard from "./LibraryCard";
 import type { MediaItem } from "@/types/library";
 import { fetchMediaCollection} from "@/services/mediaService";
 import { SortAsc, Play, BookOpen, Clock, Award, Flame, TrendingUp, Plus, Sparkles } from "lucide-react";
+import { useAuth } from "@/providers/AuthContext";
 
 const Library: React.FC = () => {
    const [collection, setCollection] = useState<MediaItem[]>([]);
@@ -13,23 +14,29 @@ const Library: React.FC = () => {
   const [modalItem, setModalItem] = useState<MediaItem | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
 
-  const token = localStorage.getItem("supabase_token")!;
   useEffect(() => {
+    let active = true;
+
     const fetchData = async () => {
       setLoading(true);
       try {
-          const data = await fetchMediaCollection(token);
-          setCollection(data);
+        const data = await fetchMediaCollection();
+        if (active) setCollection(data);
       } catch (error) {
         console.error("Error fetching library:", error);
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
     };
 
-    fetchData();
-  }, [token]);
+    void fetchData();
+
+    return () => {
+      active = false;
+    };
+  }, [user]);
 
   const filteredItems = collection.filter((item) => filter === "all"  ? true : item.type === filter)
 
@@ -272,7 +279,7 @@ const Library: React.FC = () => {
           isOpen={modalOpen}
           onClose={() => setModalOpen(false)}
           data={modalItem}
-          onRefresh={() => fetchMediaCollection(token).then(setCollection)}
+          onRefresh={() => fetchMediaCollection().then(setCollection)}
         />
       )}
     </div>

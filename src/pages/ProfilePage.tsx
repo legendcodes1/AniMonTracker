@@ -4,43 +4,50 @@ import Navbar from "@/components/Navbar/Navbar";
 import { fetchMediaCollection } from "@/services/mediaService";
 import type { MediaItem } from "@/types/library";
 import { supabase } from "@/lib/supabase";
-const baseApi = import.meta.env.VITE_API_BASE_URL;
+import { apiRequest } from "@/lib/apiClient";
+import { useAuth } from "@/providers/AuthContext";
 
 export default function ProfilePage() {
   const [collection, setCollection] = useState<MediaItem[]>([]);
-  const [clubs, setClubs] = useState<any[]>([]);
-  const [username, setUsername] = useState<string>("")
-  const token = localStorage.getItem("supabase_token") || localStorage.getItem("token") || "";
-  const userId = localStorage.getItem("user_id") || localStorage.getItem("userId") || "";
+  const [clubs, setClubs] = useState<unknown[]>([]);
+  const [username, setUsername] = useState<string>("");
+  const { user } = useAuth();
 
- useEffect(() => {
+  useEffect(() => {
+    if (!user) return;
+
+    let active = true;
+
     const load = async () => {
       try {
-        // Fetch username
         const { data: userData, error: userError } = await supabase
-          .from('Users')
-          .select('username')
-          .eq('id', userId)
+          .from("Users")
+          .select("username")
+          .eq("id", user.id)
           .single();
 
         if (userError) throw userError;
-        setUsername(userData?.username || "User");
+        if (active) setUsername(userData?.username || "User");
 
-        // Fetch library and clubs
         const [lib, clubRes] = await Promise.all([
-          fetchMediaCollection(token),
-          fetch(`${baseApi}/api/clubs/${userId}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }).then((r) => (r.ok ? r.json() : [])),
+          fetchMediaCollection(),
+          apiRequest<unknown>(`/clubs/${user.id}`).catch(() => []),
         ]);
+
+        if (!active) return;
         setCollection(lib);
         setClubs(Array.isArray(clubRes) ? clubRes : []);
       } catch (e) {
         console.error(e);
       }
     };
-    load();
-  }, [token, userId]);
+
+    void load();
+
+    return () => {
+      active = false;
+    };
+  }, [user]);
 
   const recentLibrary = collection.slice(0, 6);
 
