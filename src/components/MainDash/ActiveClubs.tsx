@@ -19,9 +19,9 @@ export default function ActiveClubs() {
               <div className="flex-col">
                 <h2 className="text-white font-bold">{club.name}</h2>
                 <p className="text-slate-400 text-sm">
-                  {club.memberCount > 0 
-                    ? `${club.memberCount.toLocaleString()} Members` 
-                    : 'No members yet'}
+                  {club.memberCount > 0
+                    ? `${club.memberCount.toLocaleString()} Members`
+                    : "No members yet"}
                 </p>
               </div>
               <div className="border rounded-full bg-blue-500 hover:bg-blue-600 w-8 h-8 flex items-center justify-center cursor-pointer transition-colors">

@@ -15,17 +15,21 @@ interface ClubModalProps {
   onRefresh: () => void;
 }
 
-export default function ClubModal({ isOpen, onClose, onRefresh }: ClubModalProps) {
+export default function ClubModal({
+  isOpen,
+  onClose,
+  onRefresh,
+}: ClubModalProps) {
   const [formData, setFormData] = useState<ClubFormData>({
     name: "",
     description: "",
-    avatarUrl: ""
+    avatarUrl: "",
   });
   const [submitting, setSubmitting] = useState(false);
   const { user } = useAuth();
 
   const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));

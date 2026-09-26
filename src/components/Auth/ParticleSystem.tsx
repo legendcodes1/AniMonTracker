@@ -24,8 +24,6 @@ const Particle = ({ delay = 0, color = "#ff6b6b", duration = 6 }) => {
   );
 };
 
-
-
 export default function ParticleSystem() {
   const colors = ["#ff6b6b", "#4ecdc4", "#45b7d1", "#f9ca24", "#6c5ce7"];
 
@@ -41,4 +39,4 @@ export default function ParticleSystem() {
       ))}
     </div>
   );
-};
+}

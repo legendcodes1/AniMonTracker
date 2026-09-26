@@ -8,7 +8,13 @@ interface DemographicCardProps {
   iconColor: string;
 }
 
-export default function DemographicCard({ icon, name, number, bg, iconColor }: DemographicCardProps) {
+export default function DemographicCard({
+  icon,
+  name,
+  number,
+  bg,
+  iconColor,
+}: DemographicCardProps) {
   return (
     <div className={`${bg} rounded-xl min-h-[150px] h-full`}>
       <div className="flex flex-col items-center text-center justify-center h-full gap-2 p-6">
@@ -17,5 +23,5 @@ export default function DemographicCard({ icon, name, number, bg, iconColor }: D
         <p className="text-slate-500 text-xs">{number} Clubs</p>
       </div>
     </div>
-  )
+  );
 }

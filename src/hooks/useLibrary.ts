@@ -22,7 +22,9 @@ export function useLibrary() {
       setItems(await fetchMediaCollection());
     } catch (cause) {
       console.error("Error fetching library:", cause);
-      setError(cause instanceof Error ? cause.message : "Failed to fetch library");
+      setError(
+        cause instanceof Error ? cause.message : "Failed to fetch library",
+      );
     } finally {
       setLoading(false);
     }
@@ -45,7 +47,10 @@ export function useLibrary() {
         if (active) setItems(data);
       } catch (cause) {
         console.error("Error fetching library:", cause);
-        if (active) setError(cause instanceof Error ? cause.message : "Failed to fetch library");
+        if (active)
+          setError(
+            cause instanceof Error ? cause.message : "Failed to fetch library",
+          );
       } finally {
         if (active) setLoading(false);
       }

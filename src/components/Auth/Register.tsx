@@ -15,9 +15,10 @@ export default function Register() {
     password: "",
   });
 
-  const handleInputChange = (field: keyof typeof formData) => (value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
+  const handleInputChange =
+    (field: keyof typeof formData) => (value: string) => {
+      setFormData((prev) => ({ ...prev, [field]: value }));
+    };
 
   const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

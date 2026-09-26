@@ -1,13 +1,13 @@
 export interface LibraryItem {
-  id: string; 
-  title: string; 
+  id: string;
+  title: string;
   type: "anime" | "manga";
   status: "watching" | "completed" | "plan_to_watch" | "dropped";
-  image: string; 
+  image: string;
   rating?: number;
   notes?: string;
   addedAt?: string;
-  genre?: string; 
+  genre?: string;
 }
 
 export interface MediaItem extends LibraryItem {
@@ -18,31 +18,31 @@ export interface MediaItem extends LibraryItem {
 }
 
 export interface CreateLibraryItemRequest {
-    title: string,
-    type: 'anime' | 'manga';
-    genre: string,
-    image?: string,
-    status?: 'watching' | 'completed' | 'plan_to_watch' | 'dropped';
-    notes?: string,
-    rating?: number,
+  title: string;
+  type: "anime" | "manga";
+  genre: string;
+  image?: string;
+  status?: "watching" | "completed" | "plan_to_watch" | "dropped";
+  notes?: string;
+  rating?: number;
 }
 
 export interface AddSearchResultToLibraryRequest {
-    animeId: string;
-    animeTitle: string;
-    type: 'anime' | 'manga';
-    status: 'watching' | 'completed' | 'plan_to_watch' | 'dropped';
-    animePoster?: string;
-    totalEpisodes?: number;
-    totalChapters?: number;
+  animeId: string;
+  animeTitle: string;
+  type: "anime" | "manga";
+  status: "watching" | "completed" | "plan_to_watch" | "dropped";
+  animePoster?: string;
+  totalEpisodes?: number;
+  totalChapters?: number;
 }
 
 export interface UpdateLibraryItemRequest {
   title?: string;
-  type?: 'anime' | 'manga';
+  type?: "anime" | "manga";
   genre?: string;
   image?: string;
-  status?: 'watching' | 'completed' | 'plan_to_watch' | 'dropped';
+  status?: "watching" | "completed" | "plan_to_watch" | "dropped";
   notes?: string;
   rating?: number;
 }

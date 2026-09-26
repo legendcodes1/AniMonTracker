@@ -16,8 +16,6 @@ export default function Home() {
           <CommunityCard />
           <ActiveClubs />
         </div>
-
-
       </div>
     </>
   );

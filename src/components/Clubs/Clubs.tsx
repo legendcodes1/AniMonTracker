@@ -5,7 +5,15 @@ import ClubSearch from "./ClubSearch";
 import ClubModal from "../Modal/ClubModal";
 import DemographicCard from "./DemographicCard";
 import Loading from "../Common/Loading";
-import { Swords, Skull, Heart, Smile, Sparkles, Users, ArrowRight } from "lucide-react";
+import {
+  Swords,
+  Skull,
+  Heart,
+  Smile,
+  Sparkles,
+  Users,
+  ArrowRight,
+} from "lucide-react";
 import { useClubs } from "@/hooks/useClubs";
 
 export default function Clubs() {
@@ -18,9 +26,9 @@ export default function Clubs() {
         <div className="absolute inset-0 bg-gradient-to-br from-purple-900/30 via-slate-900 to-pink-900/30" />
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
         <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-pink-500/10 rounded-full blur-3xl" />
-        
-        <NavbarClub onOpenModal={() => setModalOpen(true)}/>
-        
+
+        <NavbarClub onOpenModal={() => setModalOpen(true)} />
+
         <div className="max-w-6xl mx-auto mt-8 px-6 relative z-10">
           {/* Hero Header */}
           <div className="relative rounded-3xl overflow-hidden mb-8">
@@ -33,19 +41,27 @@ export default function Clubs() {
                   Discover Communities
                 </div>
                 <h1 className="text-4xl md:text-5xl font-black text-white mb-3">
-                  Anime Clubs & <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">Circles</span>
+                  Anime Clubs &{" "}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                    Circles
+                  </span>
                 </h1>
                 <p className="text-slate-300 text-lg max-w-xl">
-                  Find your tribe. Join circles of passionate fans and dive deep into your favorite series together.
+                  Find your tribe. Join circles of passionate fans and dive deep
+                  into your favorite series together.
                 </p>
                 <div className="flex items-center gap-6 mt-6">
                   <div className="flex items-center gap-2 text-slate-400">
                     <Users className="w-5 h-5 text-purple-400" />
-                    <span className="font-semibold text-white">{currentClubs.length}</span> clubs active
+                    <span className="font-semibold text-white">
+                      {currentClubs.length}
+                    </span>{" "}
+                    clubs active
                   </div>
                   <div className="flex items-center gap-2 text-slate-400">
                     <Heart className="w-5 h-5 text-pink-400" />
-                    <span className="font-semibold text-white">2.4k</span> members
+                    <span className="font-semibold text-white">2.4k</span>{" "}
+                    members
                   </div>
                 </div>
               </div>
@@ -75,7 +91,7 @@ export default function Clubs() {
                 View All <ArrowRight className="w-4 h-4" />
               </button>
             </div>
-            
+
             {loading ? (
               <div className="flex justify-center py-10">
                 <Loading variant="spinner" size="lg" />
@@ -84,7 +100,9 @@ export default function Clubs() {
               <div className="text-center py-16 bg-slate-800/30 rounded-2xl border border-white/5">
                 <Sparkles className="w-12 h-12 text-slate-600 mx-auto mb-4" />
                 <p className="text-slate-400 text-lg">No clubs yet</p>
-                <p className="text-slate-500 text-sm mt-1">Be the first to create a club!</p>
+                <p className="text-slate-500 text-sm mt-1">
+                  Be the first to create a club!
+                </p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -147,7 +165,7 @@ export default function Clubs() {
               <span className="w-1 h-8 bg-gradient-to-b from-yellow-500 to-orange-500 rounded-full" />
               Popular This Week
             </h2>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {[
                 { name: "One Piece Fans", members: 890, trend: "+12%" },
@@ -155,24 +173,31 @@ export default function Clubs() {
                 { name: "Attack on Titan", members: 623, trend: "+15%" },
                 { name: "Manga Readers", members: 512, trend: "+5%" },
               ].map((club, i) => (
-                <div key={i} className="bg-slate-800/40 backdrop-blur-sm rounded-xl p-4 border border-white/5 hover:border-purple-500/30 hover:bg-slate-800/60 transition-all cursor-pointer">
+                <div
+                  key={i}
+                  className="bg-slate-800/40 backdrop-blur-sm rounded-xl p-4 border border-white/5 hover:border-purple-500/30 hover:bg-slate-800/60 transition-all cursor-pointer"
+                >
                   <div className="flex items-center gap-3 mb-3">
                     <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500/30 to-pink-500/30 flex items-center justify-center text-lg">
                       🎯
                     </div>
                     <div>
                       <h4 className="font-bold text-white">{club.name}</h4>
-                      <p className="text-xs text-slate-400">{club.members} members</p>
+                      <p className="text-xs text-slate-400">
+                        {club.members} members
+                      </p>
                     </div>
                   </div>
-                  <span className="text-xs text-green-400 font-medium">{club.trend} this week</span>
+                  <span className="text-xs text-green-400 font-medium">
+                    {club.trend} this week
+                  </span>
                 </div>
               ))}
             </div>
           </div>
         </div>
       </div>
-      
+
       <ClubModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}

@@ -6,7 +6,12 @@ export class ApiError extends Error {
   readonly statusText: string;
   readonly body: string;
 
-  constructor(message: string, status: number, statusText: string, body: string) {
+  constructor(
+    message: string,
+    status: number,
+    statusText: string,
+    body: string,
+  ) {
     super(message);
     this.name = "ApiError";
     this.status = status;
@@ -15,7 +20,10 @@ export class ApiError extends Error {
   }
 }
 
-export type QueryParams = Record<string, string | number | boolean | undefined | null>;
+export type QueryParams = Record<
+  string,
+  string | number | boolean | undefined | null
+>;
 
 export interface RequestOptions extends Omit<RequestInit, "body"> {
   params?: QueryParams;
@@ -102,8 +110,14 @@ export async function apiRequest<T = unknown>(
 
   if (!response.ok) {
     const errorBody = await readErrorBody(response);
-    const message = errorBody || `HTTP ${response.status}: ${response.statusText}`;
-    throw new ApiError(message, response.status, response.statusText, errorBody);
+    const message =
+      errorBody || `HTTP ${response.status}: ${response.statusText}`;
+    throw new ApiError(
+      message,
+      response.status,
+      response.statusText,
+      errorBody,
+    );
   }
 
   if (response.status === 204) {

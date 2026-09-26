@@ -21,7 +21,9 @@ export function useClubs(): UseClubsResult {
       setClubs(await fetchClubs());
     } catch (cause) {
       console.error("Error fetching clubs", cause);
-      setError(cause instanceof Error ? cause.message : "Failed to fetch clubs");
+      setError(
+        cause instanceof Error ? cause.message : "Failed to fetch clubs",
+      );
     } finally {
       setLoading(false);
     }
@@ -38,7 +40,10 @@ export function useClubs(): UseClubsResult {
         if (active) setClubs(data);
       } catch (cause) {
         console.error("Error fetching clubs", cause);
-        if (active) setError(cause instanceof Error ? cause.message : "Failed to fetch clubs");
+        if (active)
+          setError(
+            cause instanceof Error ? cause.message : "Failed to fetch clubs",
+          );
       } finally {
         if (active) setLoading(false);
       }

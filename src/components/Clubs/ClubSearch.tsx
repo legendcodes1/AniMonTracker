@@ -1,5 +1,5 @@
 // ClubSearch.tsx
-import { Search } from "lucide-react"
+import { Search } from "lucide-react";
 
 export default function ClubSearch() {
   return (
@@ -14,13 +14,25 @@ export default function ClubSearch() {
         />
       </div>
       <div className="flex gap-2 flex-wrap">
-        <button className="bg-blue-500 text-white rounded-full px-4 py-1 text-sm">All Categories</button>
-        <button className="border border-slate-600 text-slate-300 rounded-full px-4 py-1 text-sm">Shonen</button>
-        <button className="border border-slate-600 text-slate-300 rounded-full px-4 py-1 text-sm">Seinen</button>
-        <button className="border border-slate-600 text-slate-300 rounded-full px-4 py-1 text-sm">Shojo</button>
-        <button className="border border-slate-600 text-slate-300 rounded-full px-4 py-1 text-sm">Isekai</button>
-        <button className="border border-slate-600 text-slate-300 rounded-full px-4 py-1 text-sm">Slice of Life</button>
+        <button className="bg-blue-500 text-white rounded-full px-4 py-1 text-sm">
+          All Categories
+        </button>
+        <button className="border border-slate-600 text-slate-300 rounded-full px-4 py-1 text-sm">
+          Shonen
+        </button>
+        <button className="border border-slate-600 text-slate-300 rounded-full px-4 py-1 text-sm">
+          Seinen
+        </button>
+        <button className="border border-slate-600 text-slate-300 rounded-full px-4 py-1 text-sm">
+          Shojo
+        </button>
+        <button className="border border-slate-600 text-slate-300 rounded-full px-4 py-1 text-sm">
+          Isekai
+        </button>
+        <button className="border border-slate-600 text-slate-300 rounded-full px-4 py-1 text-sm">
+          Slice of Life
+        </button>
       </div>
     </div>
-  )
+  );
 }

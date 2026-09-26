@@ -42,7 +42,9 @@ export default function ProfilePage() {
 
         {/* Achievements */}
         <section className="mb-8">
-          <h2 className="text-xl font-semibold text-white mb-4">Achievements</h2>
+          <h2 className="text-xl font-semibold text-white mb-4">
+            Achievements
+          </h2>
           <p className="text-4xl"> Coming soon</p>
           {/* <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
             {achievements.map((a) => (
@@ -55,22 +57,32 @@ export default function ProfilePage() {
         <section className="mb-8">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold text-white">Recent Library</h2>
-            <Link to="/mylibrary" className="text-purple-400 hover:text-purple-300 text-sm">
+            <Link
+              to="/mylibrary"
+              className="text-purple-400 hover:text-purple-300 text-sm"
+            >
               View all →
             </Link>
           </div>
           {recentLibrary.length === 0 ? (
-            <p className="text-slate-400 text-sm">Nothing in your library yet.</p>
+            <p className="text-slate-400 text-sm">
+              Nothing in your library yet.
+            </p>
           ) : (
             <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
               {recentLibrary.map((item: MediaItem) => (
-                <div key={item.id} className="rounded-lg overflow-hidden border border-slate-700/50 group">
+                <div
+                  key={item.id}
+                  className="rounded-lg overflow-hidden border border-slate-700/50 group"
+                >
                   <img
                     src={item.image}
                     alt={item.title}
                     className="w-full h-28 object-cover group-hover:scale-105 transition-transform"
                   />
-                  <p className="text-xs text-slate-300 p-1 truncate">{item.title}</p>
+                  <p className="text-xs text-slate-300 p-1 truncate">
+                    {item.title}
+                  </p>
                 </div>
               ))}
             </div>
@@ -81,12 +93,17 @@ export default function ProfilePage() {
         <section>
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold text-white">My Clubs</h2>
-            <Link to="/clubs" className="text-purple-400 hover:text-purple-300 text-sm">
+            <Link
+              to="/clubs"
+              className="text-purple-400 hover:text-purple-300 text-sm"
+            >
               View all →
             </Link>
           </div>
           {clubs.length === 0 ? (
-            <p className="text-slate-400 text-sm">You haven't joined any clubs yet.</p>
+            <p className="text-slate-400 text-sm">
+              You haven't joined any clubs yet.
+            </p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {clubs.slice(0, 3).map((club) => (
@@ -97,13 +114,21 @@ export default function ProfilePage() {
                 >
                   <div className="flex items-center gap-3">
                     {club.group_avatar_url ? (
-                      <img src={club.group_avatar_url} alt={club.name} className="w-10 h-10 rounded-full object-cover" />
+                      <img
+                        src={club.group_avatar_url}
+                        alt={club.name}
+                        className="w-10 h-10 rounded-full object-cover"
+                      />
                     ) : (
                       <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500" />
                     )}
                     <div>
-                      <p className="text-white font-semibold text-sm">{club.name}</p>
-                      <p className="text-slate-400 text-xs line-clamp-1">{club.description}</p>
+                      <p className="text-white font-semibold text-sm">
+                        {club.name}
+                      </p>
+                      <p className="text-slate-400 text-xs line-clamp-1">
+                        {club.description}
+                      </p>
                     </div>
                   </div>
                 </Link>

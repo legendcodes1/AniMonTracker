@@ -11,7 +11,9 @@ export async function fetchMediaCollection(): Promise<MediaItem[]> {
   }
 
   try {
-    const data = await apiRequest<unknown[]>("/library", { params: { user_id: userId } });
+    const data = await apiRequest<unknown[]>("/library", {
+      params: { user_id: userId },
+    });
 
     return (Array.isArray(data) ? data : []).map((item) => {
       const entry = item as Record<string, unknown>;

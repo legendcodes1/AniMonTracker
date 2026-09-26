@@ -1,9 +1,4 @@
-import {
-  BookOpen,
-  Bell,
-  MessageSquare,
-  CircleUserRound,
-} from "lucide-react";
+import { BookOpen, Bell, MessageSquare, CircleUserRound } from "lucide-react";
 import type { ReactNode } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "@/providers/AuthContext";
@@ -40,22 +35,13 @@ export default function Navbar({ actions, showClubs = true }: NavbarProps) {
             </h1>
           </div>
           <nav className="flex items-center gap-6">
-            <NavLink
-              to="/discovery"
-              className={navClass}
-            >
+            <NavLink to="/discovery" className={navClass}>
               Home
             </NavLink>
-            <NavLink
-              to="/mylibrary"
-              className={navClass}
-            >
+            <NavLink to="/mylibrary" className={navClass}>
               My Library
             </NavLink>
-            <NavLink
-              to="/search"
-              className={navClass}
-            >
+            <NavLink to="/search" className={navClass}>
               Discovery
             </NavLink>
             {showClubs && (
@@ -74,19 +60,19 @@ export default function Navbar({ actions, showClubs = true }: NavbarProps) {
           <div className="flex justify-between gap-3">
             {actions ?? (
               <>
-              <div>
-                <button type="button" aria-label="Notifications">
-                  <Bell />
-                </button>
-              </div>
-              <div>
-                <button type="button" aria-label="Messages">
-                  <MessageSquare />
-                </button>
-            </div>
-            <div> 
+                <div>
+                  <button type="button" aria-label="Notifications">
+                    <Bell />
+                  </button>
+                </div>
+                <div>
+                  <button type="button" aria-label="Messages">
+                    <MessageSquare />
+                  </button>
+                </div>
+                <div>
                   <Link to="/profile">
-                   <CircleUserRound />
+                    <CircleUserRound />
                   </Link>
                 </div>
               </>

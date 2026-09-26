@@ -22,7 +22,12 @@ interface FormData {
   status: "watching" | "completed" | "plan_to_watch" | "dropped";
   type: "manga" | "anime";
 }
-export default function LibraryModal({ isOpen, onClose, data, onRefresh}: LibraryModalProps) {
+export default function LibraryModal({
+  isOpen,
+  onClose,
+  data,
+  onRefresh,
+}: LibraryModalProps) {
   const [formData, setFormData] = useState<FormData>({
     title: data?.title ?? "",
     genre: data?.genre ?? "",
@@ -42,14 +47,14 @@ export default function LibraryModal({ isOpen, onClose, data, onRefresh}: Librar
     }));
   };
 
-    const handleSave = async () => {
-      if (!data) return;
+  const handleSave = async () => {
+    if (!data) return;
 
     try {
-        await updateLibraryItem(data.id, formData);
-        onRefresh();
-        onClose();
-      }  catch (error) {
+      await updateLibraryItem(data.id, formData);
+      onRefresh();
+      onClose();
+    } catch (error) {
       console.error("Error:", error);
       alert("Failed to save item.");
     }
@@ -57,15 +62,15 @@ export default function LibraryModal({ isOpen, onClose, data, onRefresh}: Librar
 
   const handleCreate = async () => {
     try {
-      await addToLibrary(formData)
+      await addToLibrary(formData);
       onRefresh();
       onClose();
     } catch (error) {
-      console.error("Error:" , error)
+      console.error("Error:", error);
     }
-  }
+  };
   const handleDelete = async () => {
-     if (!data) return;
+    if (!data) return;
 
     try {
       await deleteLibraryItem(data.id);
@@ -202,11 +207,7 @@ export default function LibraryModal({ isOpen, onClose, data, onRefresh}: Librar
         <div className="flex gap-3">
           <button
             type="button"
-            onClick={() =>
-              data
-                ? handleSave()
-                : handleCreate()
-            }
+            onClick={() => (data ? handleSave() : handleCreate())}
             className="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded transition-colors"
           >
             {data ? "Update Item" : "Add Item"}

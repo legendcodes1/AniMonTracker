@@ -9,7 +9,8 @@ import type { AuthContextValue } from "./AuthContext";
 function fallbackProfile(user: User): UserProfile {
   return {
     id: user.id,
-    username: user.user_metadata?.username || user.email?.split("@")[0] || "Otaku",
+    username:
+      user.user_metadata?.username || user.email?.split("@")[0] || "Otaku",
     email: user.email,
   };
 }
@@ -29,7 +30,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .eq("id", currentUser.id)
         .single();
 
-      setProfile(!error && data ? (data as UserProfile) : fallbackProfile(currentUser));
+      setProfile(
+        !error && data ? (data as UserProfile) : fallbackProfile(currentUser),
+      );
     } catch (error) {
       console.warn("Could not fetch user profile:", error);
       setProfile(fallbackProfile(currentUser));
@@ -73,7 +76,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = useCallback(
     async (email: string, password: string) => {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
       if (error) return { error };
       applySession(data.session);
       return { error: null };
@@ -81,24 +87,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [applySession],
   );
 
-  const signUp = useCallback(async (email: string, password: string, username?: string) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { username: username || email.split("@")[0] } },
-    });
-
-    if (!error && data.user) {
-      const { error: insertError } = await supabase.from("Users").insert({
-        id: data.user.id,
-        username: username || email.split("@")[0],
+  const signUp = useCallback(
+    async (email: string, password: string, username?: string) => {
+      const { data, error } = await supabase.auth.signUp({
         email,
+        password,
+        options: { data: { username: username || email.split("@")[0] } },
       });
-      if (insertError) console.warn("Could not insert to Users table:", insertError.message);
-    }
 
-    return { error };
-  }, []);
+      if (!error && data.user) {
+        const { error: insertError } = await supabase.from("Users").insert({
+          id: data.user.id,
+          username: username || email.split("@")[0],
+          email,
+        });
+        if (insertError)
+          console.warn("Could not insert to Users table:", insertError.message);
+      }
+
+      return { error };
+    },
+    [],
+  );
 
   const signOut = useCallback(async () => {
     await supabase.auth.signOut();
@@ -131,7 +141,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       refreshProfile,
       getAccessToken,
     }),
-    [user, session, profile, loading, signIn, signUp, signOut, refreshProfile, getAccessToken],
+    [
+      user,
+      session,
+      profile,
+      loading,
+      signIn,
+      signUp,
+      signOut,
+      refreshProfile,
+      getAccessToken,
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

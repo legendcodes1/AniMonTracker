@@ -42,7 +42,7 @@ export interface KitsuResponse {
 export interface SearchResult {
   id: string;
   title: string;
-  type: 'anime' | 'manga';
+  type: "anime" | "manga";
   image: string;
   status: string;
   episodes?: number;

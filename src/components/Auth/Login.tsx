@@ -15,9 +15,10 @@ export default function Login() {
     password: "",
   });
 
-  const handleInputChange = (field: keyof typeof formData) => (value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
+  const handleInputChange =
+    (field: keyof typeof formData) => (value: string) => {
+      setFormData((prev) => ({ ...prev, [field]: value }));
+    };
 
   const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -25,7 +26,10 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const { error: signInError } = await signIn(formData.email, formData.password);
+      const { error: signInError } = await signIn(
+        formData.email,
+        formData.password,
+      );
       if (signInError) {
         setError(signInError.message);
         return;

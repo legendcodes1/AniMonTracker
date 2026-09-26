@@ -41,7 +41,9 @@ export const FormGroup = ({
           padding: "16px 20px",
           marginTop: "5px",
           backgroundColor: "rgba(15, 15, 35, 0.85)",
-          border: isFocused ? "1px solid #f87171" : "1px solid rgba(255,255,255,0.2)",
+          border: isFocused
+            ? "1px solid #f87171"
+            : "1px solid rgba(255,255,255,0.2)",
           borderRadius: "12px",
           color: "#ffffff",
           fontSize: "16px",
@@ -58,7 +60,7 @@ export const FormGroup = ({
           top: "-10px",
           left: "16px",
           padding: "0 8px",
-           marginTop: "5px",
+          marginTop: "5px",
           fontSize: "13px",
           fontWeight: "500",
           color: isFocused || value ? "#4ecdc4" : "#f87171",

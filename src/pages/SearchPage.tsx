@@ -9,7 +9,7 @@ const resultKey = (item: SearchResult): string => `${item.type}:${item.id}`;
 
 export default function SearchPage() {
   const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState<'anime' | 'manga'>("anime");
+  const [filter, setFilter] = useState<"anime" | "manga">("anime");
   const [showFilters, setShowFilters] = useState(false);
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
@@ -22,11 +22,11 @@ export default function SearchPage() {
     try {
       setLoading(true);
       setError(null);
-      
+
       const data = await searchAnimeOrManga(query, filter);
       setResults(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to search');
+      setError(err instanceof Error ? err.message : "Failed to search");
       console.error(err);
     } finally {
       setLoading(false);
@@ -39,20 +39,20 @@ export default function SearchPage() {
         animeId: item.id,
         animeTitle: item.title,
         type: item.type,
-        status: 'plan_to_watch',
+        status: "plan_to_watch",
         animePoster: item.image,
         totalEpisodes: item.episodes,
         totalChapters: item.chapters,
       });
 
       // Mark as added
-      setAddedItems(prev => new Set(prev).add(resultKey(item)));
-      
+      setAddedItems((prev) => new Set(prev).add(resultKey(item)));
+
       // Show success message (you can use a toast library here)
       alert(`Added "${item.title}" to your library!`);
     } catch (err) {
-      console.error('Error adding to library:', err);
-      alert('Failed to add to library. Please try again.');
+      console.error("Error adding to library:", err);
+      alert("Failed to add to library. Please try again.");
     }
   };
 
@@ -122,7 +122,7 @@ export default function SearchPage() {
                   disabled={!query.trim() || loading}
                   className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-slate-600 disabled:to-slate-600 text-white rounded-xl transition-all duration-200 font-semibold shadow-lg hover:shadow-purple-500/25 disabled:cursor-not-allowed"
                 >
-                  {loading ? 'Searching...' : 'Search'}
+                  {loading ? "Searching..." : "Search"}
                 </button>
               </div>
 
@@ -130,7 +130,7 @@ export default function SearchPage() {
               {showFilters && (
                 <div className="mt-4 p-4 bg-slate-700/50 rounded-xl border-t border-slate-600/50">
                   <div className="flex flex-wrap gap-3">
-                    {(['anime', 'manga'] as const).map((option) => (
+                    {(["anime", "manga"] as const).map((option) => (
                       <button
                         key={option}
                         onClick={() => setFilter(option)}
@@ -174,17 +174,21 @@ export default function SearchPage() {
                         alt={item.title}
                         className="w-full h-64 object-cover"
                       />
-                      
+
                       {/* Add to Library Button */}
                       <button
                         onClick={() => handleAddToLibrary(item)}
                         disabled={addedItems.has(resultKey(item))}
                         className={`absolute top-2 right-2 p-2 rounded-full transition-all ${
                           addedItems.has(resultKey(item))
-                            ? 'bg-green-500 text-white'
-                            : 'bg-black/60 hover:bg-purple-600 text-white opacity-0 group-hover:opacity-100'
+                            ? "bg-green-500 text-white"
+                            : "bg-black/60 hover:bg-purple-600 text-white opacity-0 group-hover:opacity-100"
                         }`}
-                        title={addedItems.has(resultKey(item)) ? 'Added to library' : 'Add to library'}
+                        title={
+                          addedItems.has(resultKey(item))
+                            ? "Added to library"
+                            : "Add to library"
+                        }
                       >
                         {addedItems.has(resultKey(item)) ? (
                           <Check className="w-5 h-5" />

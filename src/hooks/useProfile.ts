@@ -26,7 +26,10 @@ export function useProfile() {
         if (active) setClubs(data);
       } catch (cause) {
         console.error("Error fetching profile:", cause);
-        if (active) setError(cause instanceof Error ? cause.message : "Failed to fetch profile");
+        if (active)
+          setError(
+            cause instanceof Error ? cause.message : "Failed to fetch profile",
+          );
       } finally {
         if (active) setLoading(false);
       }

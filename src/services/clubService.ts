@@ -97,29 +97,40 @@ export async function fetchUserClubs(userId: string): Promise<Club[]> {
   return Array.isArray(data) ? (data as Club[]) : [];
 }
 
-export async function checkMembership(clubId: string, userId: string): Promise<MembershipStatus> {
-  const data = await apiRequest<MembershipStatus>(`/clubs/${clubId}/members/${userId}`);
+export async function checkMembership(
+  clubId: string,
+  userId: string,
+): Promise<MembershipStatus> {
+  const data = await apiRequest<MembershipStatus>(
+    `/clubs/${clubId}/members/${userId}`,
+  );
   return { isMember: data.isMember || false };
 }
 
 export async function joinClub(clubId: string, userId: string): Promise<void> {
   try {
-    await apiRequest<unknown>(`/clubs/${clubId}/members/${userId}`, { method: "POST" });
+    await apiRequest<unknown>(`/clubs/${clubId}/members/${userId}`, {
+      method: "POST",
+    });
   } catch (error) {
-    const detail = error instanceof ApiError ? `: ${error.body || error.statusText}` : "";
+    const detail =
+      error instanceof ApiError ? `: ${error.body || error.statusText}` : "";
     throw new Error(`Failed to join group${detail}`);
   }
 }
 
 export async function leaveClub(clubId: string, userId: string): Promise<void> {
-  await apiRequest<void>(`/clubs/${clubId}/members/${userId}`, { method: "DELETE" });
+  await apiRequest<void>(`/clubs/${clubId}/members/${userId}`, {
+    method: "DELETE",
+  });
 }
 
 export async function createClub(payload: CreateClubRequest): Promise<Club> {
   try {
     return await apiRequest<Club>("/clubs", { method: "POST", body: payload });
   } catch (error) {
-    const detail = error instanceof ApiError ? `: ${error.body || error.statusText}` : "";
+    const detail =
+      error instanceof ApiError ? `: ${error.body || error.statusText}` : "";
     throw new Error(`Failed to create group${detail}`);
   }
 }

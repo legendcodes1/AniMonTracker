@@ -6,9 +6,14 @@ import type {
   UpdateLibraryItemRequest,
 } from "@/types/library";
 
-export const addToLibrary = async (data: CreateLibraryItemRequest): Promise<LibraryItem> => {
+export const addToLibrary = async (
+  data: CreateLibraryItemRequest,
+): Promise<LibraryItem> => {
   try {
-    return await apiRequest<LibraryItem>("/library", { method: "POST", body: data });
+    return await apiRequest<LibraryItem>("/library", {
+      method: "POST",
+      body: data,
+    });
   } catch (error) {
     console.error("Error adding to library:", error);
     throw error;
@@ -19,7 +24,10 @@ export const addSearchResultToLibrary = async (
   data: AddSearchResultToLibraryRequest,
 ): Promise<LibraryItem> => {
   try {
-    return await apiRequest<LibraryItem>("/library", { method: "POST", body: data });
+    return await apiRequest<LibraryItem>("/library", {
+      method: "POST",
+      body: data,
+    });
   } catch (error) {
     console.error("Error adding to library:", error);
     throw error;
@@ -31,7 +39,10 @@ export const updateLibraryItem = async (
   data: UpdateLibraryItemRequest,
 ): Promise<LibraryItem> => {
   try {
-    return await apiRequest<LibraryItem>(`/library/${itemId}`, { method: "PUT", body: data });
+    return await apiRequest<LibraryItem>(`/library/${itemId}`, {
+      method: "PUT",
+      body: data,
+    });
   } catch (error) {
     console.error("Error updating library item:", error);
     throw error;
