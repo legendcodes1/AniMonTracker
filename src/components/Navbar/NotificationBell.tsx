@@ -1,18 +1,55 @@
 import { useRef, useState } from "react";
 import { Bell } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useDismissable } from "@/hooks/useDismissable";
+import { useNotifications } from "@/hooks/useNotifications";
+import type { AppNotification } from "@/types/notification";
 import NotificationPanel from "./NotificationPanel";
 
 const panelId = "notification-panel";
 
 export default function NotificationBell() {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const { items, unreadCount, loading, error, markRead, markAllRead } =
+    useNotifications();
   const containerRef = useDismissable<HTMLDivElement>(
     open,
     () => setOpen(false),
     triggerRef,
   );
+
+  const handleSelect = async (notification: AppNotification) => {
+    try {
+      setActionError(null);
+      if (!notification.readAt) await markRead(notification.id);
+      if (notification.link) {
+        setOpen(false);
+        navigate(notification.link);
+      }
+    } catch (cause) {
+      setActionError(
+        cause instanceof Error
+          ? cause.message
+          : "Failed to update notification",
+      );
+    }
+  };
+
+  const handleMarkAllRead = async () => {
+    try {
+      setActionError(null);
+      await markAllRead();
+    } catch (cause) {
+      setActionError(
+        cause instanceof Error
+          ? cause.message
+          : "Failed to update notifications",
+      );
+    }
+  };
 
   return (
     <div ref={containerRef} className="relative">
@@ -31,9 +68,24 @@ export default function NotificationBell() {
         }`}
       >
         <Bell className="h-[18px] w-[18px]" />
+        {unreadCount > 0 && (
+          <span className="absolute -right-1.5 -top-1.5 flex min-h-5 min-w-5 items-center justify-center rounded-full border-2 border-slate-950 bg-gradient-to-r from-pink-500 to-red-500 px-1 text-[10px] font-bold leading-none text-white">
+            {unreadCount > 9 ? "9+" : unreadCount}
+          </span>
+        )}
       </button>
 
-      {open && <NotificationPanel id={panelId} />}
+      {open && (
+        <NotificationPanel
+          id={panelId}
+          notifications={items}
+          unreadCount={unreadCount}
+          loading={loading}
+          error={actionError || error}
+          onSelect={(notification) => void handleSelect(notification)}
+          onMarkAllRead={() => void handleMarkAllRead()}
+        />
+      )}
     </div>
   );
 }
