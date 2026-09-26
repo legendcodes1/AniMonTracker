@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Navbar from "../Navbar/Navbar";
 import LibraryModal from "../Modal/LibraryModal";
 import LibraryCard from "./LibraryCard";
 import type { MediaItem } from "@/types/library";
@@ -73,7 +72,6 @@ const Library: React.FC = () => {
         />
       </div>
 
-      <Navbar />
       <div className="container mx-auto px-4 py-8 relative z-10">
         {/* Hero Section */}
         <div className="relative mb-10 p-8 rounded-3xl bg-gradient-to-r from-purple-600/20 via-pink-600/10 to-blue-600/20 border border-white/10 backdrop-blur-sm overflow-hidden">

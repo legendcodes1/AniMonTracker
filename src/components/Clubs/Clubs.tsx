@@ -1,5 +1,4 @@
 import { useState } from "react";
-import NavbarClub from "../Navbar/NavbarClub";
 import ClubCard from "./ClubCard";
 import ClubSearch from "./ClubSearch";
 import ClubModal from "../Modal/ClubModal";
@@ -13,6 +12,7 @@ import {
   Sparkles,
   Users,
   ArrowRight,
+  Plus,
 } from "lucide-react";
 import { useClubs } from "@/hooks/useClubs";
 
@@ -26,8 +26,6 @@ export default function Clubs() {
         <div className="absolute inset-0 bg-gradient-to-br from-purple-900/30 via-slate-900 to-pink-900/30" />
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
         <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-pink-500/10 rounded-full blur-3xl" />
-
-        <NavbarClub onOpenModal={() => setModalOpen(true)} />
 
         <div className="max-w-6xl mx-auto mt-8 px-6 relative z-10">
           {/* Hero Header */}
@@ -65,13 +63,14 @@ export default function Clubs() {
                   </div>
                 </div>
               </div>
-              {/* <button
+              <button
+                type="button"
                 onClick={() => setModalOpen(true)}
-                className="shrink-0 px-6 py-4 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 rounded-xl font-bold text-lg shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 transition-all flex items-center gap-2"
+                className="shrink-0 px-6 py-4 bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 rounded-xl text-white font-bold text-lg shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-300 transition-all flex items-center gap-2"
               >
                 <Plus className="w-5 h-5" />
                 Create Club
-              </button> */}
+              </button>
             </div>
           </div>
 

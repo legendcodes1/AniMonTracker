@@ -8,6 +8,7 @@ import Library from "../components/Library/Library";
 import ClubDetailPage from "../pages/ClubDetailPage";
 import ProfilePage from "../pages/ProfilePage";
 import SearchPage from "../pages/SearchPage";
+import AppLayout from "./AppLayout";
 
 export default function App() {
   return (
@@ -29,53 +30,19 @@ export default function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<Register />} />
           <Route
-            path="/mylibrary"
             element={
               <ProtectedRoute>
-                <Library />
+                <AppLayout />
               </ProtectedRoute>
             }
-          />
-          <Route
-            path="/search"
-            element={
-              <ProtectedRoute>
-                <SearchPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/discovery"
-            element={
-              <ProtectedRoute>
-                <Home />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/clubs"
-            element={
-              <ProtectedRoute>
-                <Clubs />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/clubs/:id"
-            element={
-              <ProtectedRoute>
-                <ClubDetailPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <ProfilePage />
-              </ProtectedRoute>
-            }
-          />
+          >
+            <Route path="/mylibrary" element={<Library />} />
+            <Route path="/search" element={<SearchPage />} />
+            <Route path="/discovery" element={<Home />} />
+            <Route path="/clubs" element={<Clubs />} />
+            <Route path="/clubs/:id" element={<ClubDetailPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+          </Route>
         </Routes>
       </div>
     </div>

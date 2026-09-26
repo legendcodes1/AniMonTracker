@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import Navbar from "@/components/Navbar/Navbar";
 import type { MediaItem } from "@/types/library";
 import { useLibrary } from "@/hooks/useLibrary";
 import { useProfile } from "@/hooks/useProfile";
@@ -12,7 +11,6 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen">
-      <Navbar />
       <div className="container mx-auto px-4 py-8 max-w-5xl">
         {/* Profile Header */}
         <div className="flex items-center gap-6 mb-8 bg-slate-800/50 rounded-2xl p-6 border border-slate-700/50">
