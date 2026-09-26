@@ -1,13 +1,18 @@
 import { Outlet } from "react-router-dom";
 import Navbar from "@/components/Navbar/Navbar";
+import LevelUpToast from "@/components/Gamification/LevelUpToast";
+import { GamificationProvider } from "@/providers/GamificationProvider";
 
 export default function AppLayout() {
   return (
-    <div className="min-h-screen">
-      <Navbar />
-      <main>
-        <Outlet />
-      </main>
-    </div>
+    <GamificationProvider>
+      <div className="min-h-screen">
+        <Navbar />
+        <main>
+          <Outlet />
+        </main>
+        <LevelUpToast />
+      </div>
+    </GamificationProvider>
   );
 }

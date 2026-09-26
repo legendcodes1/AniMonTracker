@@ -3,12 +3,15 @@ import { ChevronDown, LogOut, UserRound } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDismissable } from "@/hooks/useDismissable";
 import { useAuth } from "@/providers/AuthContext";
+import { useGamification } from "@/providers/GamificationContext";
+import LevelProgress from "@/components/Gamification/LevelProgress";
 
 const menuId = "user-menu";
 
 export default function UserMenu() {
   const navigate = useNavigate();
   const { profile, user, signOut } = useAuth();
+  const { stats } = useGamification();
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const containerRef = useDismissable<HTMLDivElement>(
@@ -50,6 +53,9 @@ export default function UserMenu() {
         <span className="hidden max-w-28 truncate text-sm font-medium text-slate-200 lg:block">
           {username}
         </span>
+        <span className="hidden rounded-md bg-purple-500/15 px-1.5 py-0.5 text-[10px] font-bold text-purple-300 xl:block">
+          LV {stats.level}
+        </span>
         <ChevronDown
           className={`h-3.5 w-3.5 text-slate-500 transition-transform ${open ? "rotate-180" : ""}`}
         />
@@ -66,6 +72,9 @@ export default function UserMenu() {
             <p className="mt-0.5 truncate text-xs text-slate-500">
               {profile?.email || user?.email}
             </p>
+          </div>
+          <div className="border-b border-white/10 p-2">
+            <LevelProgress stats={stats} compact />
           </div>
           <div className="py-2">
             <Link

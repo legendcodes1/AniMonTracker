@@ -1,6 +1,8 @@
 import { LogOut, UserRound } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/providers/AuthContext";
+import { useGamification } from "@/providers/GamificationContext";
+import LevelProgress from "@/components/Gamification/LevelProgress";
 import NavLinks from "./NavLinks";
 
 interface MobileNavProps {
@@ -11,6 +13,7 @@ interface MobileNavProps {
 export default function MobileNav({ open, onClose }: MobileNavProps) {
   const navigate = useNavigate();
   const { profile, user, signOut } = useAuth();
+  const { stats } = useGamification();
   const username = profile?.username || user?.email?.split("@")[0] || "Otaku";
 
   if (!open) return null;
@@ -46,6 +49,9 @@ export default function MobileNav({ open, onClose }: MobileNavProps) {
           </span>
           <UserRound className="h-4 w-4 text-slate-500" />
         </Link>
+        <div className="px-1 py-2">
+          <LevelProgress stats={stats} compact />
+        </div>
         <button
           type="button"
           onClick={handleSignOut}

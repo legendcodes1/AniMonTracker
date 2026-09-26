@@ -2,10 +2,18 @@ import { Link } from "react-router-dom";
 import type { MediaItem } from "@/types/library";
 import { useLibrary } from "@/hooks/useLibrary";
 import { useProfile } from "@/hooks/useProfile";
+import AchievementBadge from "@/components/Gamification/AchievementBadge";
+import LevelProgress from "@/components/Gamification/LevelProgress";
+import { useGamification } from "@/providers/GamificationContext";
 
 export default function ProfilePage() {
   const { items: collection } = useLibrary();
   const { username, clubs } = useProfile();
+  const {
+    stats,
+    achievements,
+    loading: gamificationLoading,
+  } = useGamification();
 
   const recentLibrary = collection.slice(0, 6);
 
@@ -17,11 +25,11 @@ export default function ProfilePage() {
           <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-3xl font-bold text-white">
             {username.charAt(0).toUpperCase()}
           </div>
-          <div>
+          <div className="min-w-0 flex-1">
             <h1 className="text-3xl font-bold text-white">{username}</h1>
-            {/* <p className="text-slate-400 text-sm mt-1">
-              {stats.totalAnime + stats.totalManga} titles in library
-            </p> */}
+            <div className="mt-4 max-w-md">
+              <LevelProgress stats={stats} />
+            </div>
           </div>
         </div>
 
@@ -43,12 +51,29 @@ export default function ProfilePage() {
           <h2 className="text-xl font-semibold text-white mb-4">
             Achievements
           </h2>
-          <p className="text-4xl"> Coming soon</p>
-          {/* <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
-            {achievements.map((a) => (
-              <AchievementBadge key={a.id} achievement={a} />
-            ))}
-          </div> */}
+          {gamificationLoading ? (
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {[0, 1, 2, 3].map((item) => (
+                <div
+                  key={item}
+                  className="h-44 animate-pulse rounded-2xl bg-slate-800/60"
+                />
+              ))}
+            </div>
+          ) : achievements.length > 0 ? (
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {achievements.map((achievement) => (
+                <AchievementBadge
+                  key={achievement.code}
+                  achievement={achievement}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-slate-400">
+              Achievements will appear as you build your AniMon journey.
+            </p>
+          )}
         </section>
 
         {/* Library Snippet */}
