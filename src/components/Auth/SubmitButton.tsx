@@ -1,13 +1,13 @@
 import type { ReactNode } from "react";
 
 
-interface submitButton {
-    children : ReactNode,
-    loading: boolean
+interface SubmitButtonProps {
+  children: ReactNode;
+  loading?: boolean;
 }
 
 
-export const SubmitButton = ({ children, loading = false} : submitButton) => (
+export const SubmitButton = ({ children, loading = false }: SubmitButtonProps) => (
   <button
     disabled={loading}
     className={`

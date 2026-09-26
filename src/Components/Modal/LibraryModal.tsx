@@ -28,16 +28,18 @@ export default function LibraryModal({ isOpen, onClose, data, onRefresh}: Librar
     genre: data?.genre ?? "",
     image: data?.image ?? "",
     rating: data?.rating ?? 0,
-    notes: data?.status ?? "",
+    notes: data?.notes ?? "",
     status: data?.status ?? "watching",
     type: data?.type ?? "manga",
   });
-  console.log(data);
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "rating" ? Number(value) : value,
+    }));
   };
 
     const handleSave = async () => {

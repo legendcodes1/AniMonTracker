@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Navbar from "../Navbar/Navbar";
-import LibraryModal from "../Modal/MangaModel";
+import LibraryModal from "../Modal/LibraryModal";
 import LibraryCard from "./LibraryCard";
 import type { MediaItem } from "@/types/library";
 import { SortAsc, Play, BookOpen, Clock, Award, Flame, TrendingUp, Plus, Sparkles } from "lucide-react";

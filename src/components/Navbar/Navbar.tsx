@@ -3,14 +3,22 @@ import {
   Bell,
   MessageSquare,
   CircleUserRound,
-
 } from "lucide-react";
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import type { ReactNode } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "@/providers/AuthContext";
 
-export default function Navbar() {
-  const [activeTab, setActiveTab] = useState("home");
+interface NavbarProps {
+  actions?: ReactNode;
+  showClubs?: boolean;
+}
+
+const navClass = ({ isActive }: { isActive: boolean }) =>
+  `px-4 py-2 rounded-lg transition-colors ${
+    isActive ? "bg-purple-600 text-white" : "text-slate-400 hover:text-white"
+  }`;
+
+export default function Navbar({ actions, showClubs = true }: NavbarProps) {
   const navigate = useNavigate();
   const { signOut } = useAuth();
 
@@ -32,58 +40,40 @@ export default function Navbar() {
             </h1>
           </div>
           <nav className="flex items-center gap-6">
-            <Link
-              onClick={() => setActiveTab("home")}
+            <NavLink
               to="/discovery"
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                activeTab === "home"
-                  ? "bg-purple-600 text-white"
-                  : "text-slate-400 hover:text-white"
-              }`}
+              className={navClass}
             >
               Home
-            </Link>
-            <Link
-              onClick={() => setActiveTab("library")}
+            </NavLink>
+            <NavLink
               to="/mylibrary"
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                activeTab === "library"
-                  ? "bg-purple-600 text-white"
-                  : "text-slate-400 hover:text-white"
-              }`}
+              className={navClass}
             >
               My Library
-            </Link>
-                 <Link
-              onClick={() => setActiveTab("discovery")}
+            </NavLink>
+            <NavLink
               to="/search"
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                activeTab === "discovery"
-                  ? "bg-purple-600 text-white"
-                  : "text-slate-400 hover:text-white"
-              }`}
+              className={navClass}
             >
               Discovery
-            </Link>
-                  <Link
-              onClick={() => setActiveTab("clubs")}
-              to="/clubs"
-              className={`px-4 py-2 rounded-lg transition-colors ${
-                activeTab === "clubs"
-                  ? "bg-purple-600 text-white"
-                  : "text-slate-400 hover:text-white"
-              }`}
-            >
-              Clubs
-            </Link>
+            </NavLink>
+            {showClubs && (
+              <NavLink to="/clubs" className={navClass}>
+                Clubs
+              </NavLink>
+            )}
             <button
+              type="button"
               onClick={handleSignOut}
               className="text-slate-400 hover:text-white px-4 py-2 rounded-lg transition-colors"
             >
               Sign out
             </button>
           </nav>
-          <div className="flex justify-between">
+          <div className="flex justify-between gap-3">
+            {actions ?? (
+              <>
               <div>
                 <button type="button" aria-label="Notifications">
                   <Bell />
@@ -99,6 +89,8 @@ export default function Navbar() {
                    <CircleUserRound />
                   </Link>
                 </div>
+              </>
+            )}
           </div>
         </div>
       </div>

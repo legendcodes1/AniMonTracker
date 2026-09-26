@@ -24,7 +24,13 @@ export interface RequestOptions extends Omit<RequestInit, "body"> {
   auth?: boolean;
 }
 
-const apiRoot = (): string => `${env.apiBaseUrl}/api`;
+const apiRoot = (): string => {
+  if (!env.apiBaseUrl) {
+    throw new Error("VITE_API_BASE_URL is not configured");
+  }
+
+  return `${env.apiBaseUrl}/api`;
+};
 
 export async function getAccessToken(): Promise<string | null> {
   const {

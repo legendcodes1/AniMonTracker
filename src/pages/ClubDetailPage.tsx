@@ -375,9 +375,10 @@ export default function ClubDetailPage() {
                 <p className="text-slate-400 text-sm mb-4">Connect with {club.memberCount || 0} members and participate in discussions!</p>
                 <button 
                   onClick={handleJoinClub}
-                  className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-bold hover:shadow-lg transition-all"
+                  disabled={joining}
+                  className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-bold hover:shadow-lg transition-all disabled:cursor-wait disabled:opacity-70"
                 >
-                  Join Now
+                  {joining ? "Joining..." : "Join Now"}
                 </button>
               </div>
             )}

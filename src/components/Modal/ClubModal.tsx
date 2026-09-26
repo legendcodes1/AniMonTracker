@@ -37,15 +37,13 @@ export default function ClubModal({ isOpen, onClose, onRefresh }: ClubModalProps
 
       if (!user) throw new Error("Not authenticated");
 
-      const created = await createClub({
+      await createClub({
         name: formData.name,
         description: formData.description,
         group_avatar_url: formData.avatarUrl,
         userId: user.id,
         createdBy: user.id,
       });
-
-      console.log("Group created:", created);
 
       setFormData({
         name: "",

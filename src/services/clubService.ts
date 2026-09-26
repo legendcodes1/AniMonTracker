@@ -1,4 +1,4 @@
-import { apiRequest, ApiError, getAccessToken, getCurrentUserId } from "@/lib/apiClient";
+import { apiRequest, ApiError, getAccessToken } from "@/lib/apiClient";
 import { env } from "@/lib/env";
 
 export interface Club {
@@ -122,12 +122,4 @@ export async function createClub(payload: CreateClubRequest): Promise<Club> {
     const detail = error instanceof ApiError ? `: ${error.body || error.statusText}` : "";
     throw new Error(`Failed to create group${detail}`);
   }
-}
-
-export async function getCurrentUser(): Promise<string> {
-  const userId = await getCurrentUserId();
-  if (!userId) {
-    throw new Error("Not authenticated");
-  }
-  return userId;
 }

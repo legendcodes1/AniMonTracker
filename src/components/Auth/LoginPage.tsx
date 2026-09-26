@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ParticleSystem from "./ParticalSystem";
+import ParticleSystem from "./ParticleSystem";
 import { TabButton } from "../FormComponents/FormButtons";
 import Login from "./Login";
 import Register from "./Register";

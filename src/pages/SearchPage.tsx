@@ -5,7 +5,9 @@ import { searchAnimeOrManga } from "@/services/kitsuService";
 import { addSearchResultToLibrary } from "@/services/libraryService";
 import type { SearchResult } from "@/types/kitsu";
 
-export default function SearchComponent() {
+const resultKey = (item: SearchResult): string => `${item.type}:${item.id}`;
+
+export default function SearchPage() {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<'anime' | 'manga'>("anime");
   const [showFilters, setShowFilters] = useState(false);
@@ -44,7 +46,7 @@ export default function SearchComponent() {
       });
 
       // Mark as added
-      setAddedItems(prev => new Set(prev).add(item.id));
+      setAddedItems(prev => new Set(prev).add(resultKey(item)));
       
       // Show success message (you can use a toast library here)
       alert(`Added "${item.title}" to your library!`);
@@ -163,7 +165,7 @@ export default function SearchComponent() {
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
                 {results.map((item) => (
                   <div
-                    key={item.id}
+                    key={resultKey(item)}
                     className="bg-slate-800 rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow group relative"
                   >
                     <div className="relative">
@@ -176,15 +178,15 @@ export default function SearchComponent() {
                       {/* Add to Library Button */}
                       <button
                         onClick={() => handleAddToLibrary(item)}
-                        disabled={addedItems.has(item.id)}
+                        disabled={addedItems.has(resultKey(item))}
                         className={`absolute top-2 right-2 p-2 rounded-full transition-all ${
-                          addedItems.has(item.id)
+                          addedItems.has(resultKey(item))
                             ? 'bg-green-500 text-white'
                             : 'bg-black/60 hover:bg-purple-600 text-white opacity-0 group-hover:opacity-100'
                         }`}
-                        title={addedItems.has(item.id) ? 'Added to library' : 'Add to library'}
+                        title={addedItems.has(resultKey(item)) ? 'Added to library' : 'Add to library'}
                       >
-                        {addedItems.has(item.id) ? (
+                        {addedItems.has(resultKey(item)) ? (
                           <Check className="w-5 h-5" />
                         ) : (
                           <Plus className="w-5 h-5" />

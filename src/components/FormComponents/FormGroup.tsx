@@ -1,12 +1,13 @@
-import { useState } from "react"
+import { useState } from "react";
+import type { ChangeEvent } from "react";
 
-interface formType {
-    label: string,
-    type: string,
-    value: string,
-    placeholder: string,
-    onChange : (inputValue: string) => void,
-    required: boolean
+interface FormGroupProps {
+  label: string;
+  type?: string;
+  value: string;
+  placeholder: string;
+  onChange: (inputValue: string) => void;
+  required?: boolean;
 }
 
 export const FormGroup = ({
@@ -16,21 +17,15 @@ export const FormGroup = ({
   value,
   onChange,
   required = false,
-} : formType) => {
+}: FormGroupProps) => {
   const [isFocused, setIsFocused] = useState(false);
-  const [hasValue, setHasValue] = useState(false);
 
   const handleFocus = () => setIsFocused(true);
   const handleBlur = () => setIsFocused(false);
 
- const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const value = e.target.value;
-  setHasValue(value !== "");
-  onChange(value); 
-};
-
-
-
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    onChange(event.target.value);
+  };
   return (
     <div className="relative mb-6">
       <input
@@ -66,7 +61,7 @@ export const FormGroup = ({
            marginTop: "5px",
           fontSize: "13px",
           fontWeight: "500",
-          color: isFocused || hasValue ? "#4ecdc4" : "#f87171",
+          color: isFocused || value ? "#4ecdc4" : "#f87171",
           background: "linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%)",
           pointerEvents: "none",
           transition: "color 0.3s ease",
