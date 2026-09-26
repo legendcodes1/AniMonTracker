@@ -1,42 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Navbar from "../Navbar/Navbar";
 import LibraryModal from "../Modal/MangaModel";
 import LibraryCard from "./LibraryCard";
 import type { MediaItem } from "@/types/library";
-import { fetchMediaCollection} from "@/services/mediaService";
 import { SortAsc, Play, BookOpen, Clock, Award, Flame, TrendingUp, Plus, Sparkles } from "lucide-react";
-import { useAuth } from "@/providers/AuthContext";
+import { useLibrary } from "@/hooks/useLibrary";
 
 const Library: React.FC = () => {
-   const [collection, setCollection] = useState<MediaItem[]>([]);
+  const { items: collection, loading, refresh } = useLibrary();
   const [filter, setFilter] = useState<"all" | "anime" | "manga">("all");
   const [sortBy, setSortBy] = useState<"recent" | "rating" | "title">("recent");
   const [modalItem, setModalItem] = useState<MediaItem | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const { user } = useAuth();
-
-  useEffect(() => {
-    let active = true;
-
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const data = await fetchMediaCollection();
-        if (active) setCollection(data);
-      } catch (error) {
-        console.error("Error fetching library:", error);
-      } finally {
-        if (active) setLoading(false);
-      }
-    };
-
-    void fetchData();
-
-    return () => {
-      active = false;
-    };
-  }, [user]);
 
   const filteredItems = collection.filter((item) => filter === "all"  ? true : item.type === filter)
 
@@ -279,7 +254,7 @@ const Library: React.FC = () => {
           isOpen={modalOpen}
           onClose={() => setModalOpen(false)}
           data={modalItem}
-          onRefresh={() => fetchMediaCollection().then(setCollection)}
+          onRefresh={refresh}
         />
       )}
     </div>

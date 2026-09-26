@@ -1,21 +1,26 @@
 import { useState, useEffect } from "react";
 import { Plus, Settings, Users, MessageSquare, UserPlus, Loader2, Heart, Send, MoreHorizontal, Calendar, MessageCircle, Sparkles, Crown, LogOut } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
-import { checkMembership, fetchClubById, joinClub, leaveClub } from "@/services/clubService";
+import { fetchClubById } from "@/services/clubService";
+import type { Club } from "@/services/clubService";
 import { useAuth } from "@/providers/AuthContext";
+import { useClubMembership } from "@/hooks/useClubMembership";
 
 export default function ClubDetailPage() {
   const { id } = useParams();
-  const [club, setClub] = useState<any>(null);
+  const [club, setClub] = useState<Club | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
-  const [isMember, setIsMember] = useState(false);
-  const [checkingMembership, setCheckingMembership] = useState(true);
-  const [joining, setJoining] = useState(false);
   const [activeTab, setActiveTab] = useState<"discussions" | "members" | "about">("discussions");
   const [postContent, setPostContent] = useState("");
   const { user } = useAuth();
+  const {
+    isMember,
+    checking: checkingMembership,
+    joining,
+    join,
+    leave,
+  } = useClubMembership(id, Boolean(club));
 
   useEffect(() => {
     let active = true;
@@ -30,7 +35,6 @@ export default function ClubDetailPage() {
       }
 
       try {
-        if (active) setCurrentUserId(user.id);
         const clubData = await fetchClubById(String(id));
         if (active) setClub(clubData);
       } catch (err) {
@@ -47,60 +51,20 @@ export default function ClubDetailPage() {
     };
   }, [id, user]);
 
-  useEffect(() => {
-    let active = true;
-
-    const loadMembership = async () => {
-      if (!user || !id) {
-        if (active) setCheckingMembership(false);
-        return;
-      }
-
-      try {
-        const { isMember } = await checkMembership(String(id), user.id);
-        if (active) setIsMember(isMember);
-      } catch (error) {
-        console.error("Error checking membership:", error);
-      } finally {
-        if (active) setCheckingMembership(false);
-      }
-    };
-
-    if (club) {
-      void loadMembership();
-    }
-
-    return () => {
-      active = false;
-    };
-  }, [club, id, user]);
-
   const handleJoinClub = async () => {
-    if (!user) {
-      alert("Please login first!");
-      return;
-    }
-
-    setJoining(true);
     try {
-      await joinClub(String(id), user.id);
-      setIsMember(true);
+      await join();
     } catch (error) {
       console.error("Error joining group:", error);
       alert(error instanceof Error ? error.message : "Failed to join group");
-    } finally {
-      setJoining(false);
     }
   };
 
   const handleLeaveClub = async () => {
     if (!confirm("Are you sure you want to leave this club?")) return;
 
-    if (!user) return;
-
     try {
-      await leaveClub(String(id), user.id);
-      setIsMember(false);
+      await leave();
       window.location.href = "/clubs";
     } catch (error) {
       console.error("Error leaving club:", error);
@@ -116,8 +80,9 @@ export default function ClubDetailPage() {
 
   if (loading) return <div className="min-h-screen bg-slate-900 p-10 text-white flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-purple-500" /></div>;
   if (error) return <div className="min-h-screen bg-slate-900 p-10 text-red-500">{error}</div>;
+  if (!club) return <div className="min-h-screen bg-slate-900 p-10 text-red-500">Club not found</div>;
 
-  const isAdmin = club?.creator_id === currentUserId;
+  const isAdmin = club.creator_id === user?.id;
   
   const mockDiscussions = [
     { id: 1, user: "AnimeFan92", avatar: "A", title: "What's your favorite arc in this series?", replies: 24, likes: 45, time: "2h ago" },
@@ -127,7 +92,7 @@ export default function ClubDetailPage() {
   ];
 
   const mockMembers = [
-    { id: 1, name: club?.creator_id || "Admin", role: "Admin", avatar: "A", joined: "Jan 2024", online: true },
+    { id: 1, name: club.creator_id || "Admin", role: "Admin", avatar: "A", joined: "Jan 2024", online: true },
     { id: 2, name: "AnimeFan92", role: "Moderator", avatar: "F", joined: "Feb 2024", online: true },
     { id: 3, name: "MangaReader", role: "Member", avatar: "M", joined: "Mar 2024", online: false },
     { id: 4, name: "OtakuKing", role: "Member", avatar: "O", joined: "Apr 2024", online: true },
@@ -255,7 +220,7 @@ export default function ClubDetailPage() {
                   <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-5 border border-white/5">
                     <div className="flex gap-4">
                       <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center font-bold text-white shrink-0">
-                        {currentUserId?.charAt(0).toUpperCase() || "U"}
+                        {user?.id.charAt(0).toUpperCase() || "U"}
                       </div>
                       <div className="flex-1">
                         <textarea

@@ -1,53 +1,12 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar/Navbar";
-import { fetchMediaCollection } from "@/services/mediaService";
 import type { MediaItem } from "@/types/library";
-import { supabase } from "@/lib/supabase";
-import { apiRequest } from "@/lib/apiClient";
-import { useAuth } from "@/providers/AuthContext";
+import { useLibrary } from "@/hooks/useLibrary";
+import { useProfile } from "@/hooks/useProfile";
 
 export default function ProfilePage() {
-  const [collection, setCollection] = useState<MediaItem[]>([]);
-  const [clubs, setClubs] = useState<unknown[]>([]);
-  const [username, setUsername] = useState<string>("");
-  const { user } = useAuth();
-
-  useEffect(() => {
-    if (!user) return;
-
-    let active = true;
-
-    const load = async () => {
-      try {
-        const { data: userData, error: userError } = await supabase
-          .from("Users")
-          .select("username")
-          .eq("id", user.id)
-          .single();
-
-        if (userError) throw userError;
-        if (active) setUsername(userData?.username || "User");
-
-        const [lib, clubRes] = await Promise.all([
-          fetchMediaCollection(),
-          apiRequest<unknown>(`/clubs/${user.id}`).catch(() => []),
-        ]);
-
-        if (!active) return;
-        setCollection(lib);
-        setClubs(Array.isArray(clubRes) ? clubRes : []);
-      } catch (e) {
-        console.error(e);
-      }
-    };
-
-    void load();
-
-    return () => {
-      active = false;
-    };
-  }, [user]);
+  const { items: collection } = useLibrary();
+  const { username, clubs } = useProfile();
 
   const recentLibrary = collection.slice(0, 6);
 
@@ -130,7 +89,7 @@ export default function ProfilePage() {
             <p className="text-slate-400 text-sm">You haven't joined any clubs yet.</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {clubs.slice(0, 3).map((club: any) => (
+              {clubs.slice(0, 3).map((club) => (
                 <Link
                   key={club.id}
                   to={`/clubs/${club.id}`}

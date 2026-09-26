@@ -1,9 +1,8 @@
-import { useState, useEffect } from "react";
+import type { MouseEvent } from "react";
 import Loading from "../Common/Loading";
 import { useNavigate } from "react-router-dom";
 import { Users, TrendingUp, UserPlus, Check } from "lucide-react";
-import { checkMembership, joinClub } from "@/services/clubService";
-import { useAuth } from "@/providers/AuthContext";
+import { useClubMembership } from "@/hooks/useClubMembership";
 
 interface ClubCardProps {
   id: string;
@@ -20,56 +19,16 @@ export default function ClubCard({
   title,
   description,
 }: ClubCardProps) {
-  const [isMember, setIsMember] = useState(false);
-  const [checkingMembership, setCheckingMembership] = useState(true);
-  const [joining, setJoining] = useState(false);
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { isMember, checking: checkingMembership, joining, join } = useClubMembership(id);
 
-  useEffect(() => {
-    let active = true;
-
-    const loadMembership = async () => {
-      if (!user) {
-        setCheckingMembership(false);
-        return;
-      }
-
-      try {
-        const { isMember } = await checkMembership(id, user.id);
-        if (active) setIsMember(isMember);
-      } catch (error) {
-        console.error("Error checking membership:", error);
-        if (active) setIsMember(false);
-      } finally {
-        if (active) setCheckingMembership(false);
-      }
-    };
-
-    void loadMembership();
-
-    return () => {
-      active = false;
-    };
-  }, [id, user]);
-
-  const handleJoinClub = async (e: React.MouseEvent) => {
+  const handleJoinClub = async (e: MouseEvent) => {
     e.stopPropagation();
-
-    if (!user) {
-      alert("Please login first!");
-      return;
-    }
-
-    setJoining(true);
     try {
-      await joinClub(id, user.id);
-      setIsMember(true);
+      await join();
     } catch (error) {
       console.error("Error joining group:", error);
       alert(error instanceof Error ? error.message : "Failed to join group");
-    } finally {
-      setJoining(false);
     }
   };
 

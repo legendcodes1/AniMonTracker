@@ -92,6 +92,11 @@ export async function fetchClubById(clubId: string): Promise<Club | null> {
   return data ?? null;
 }
 
+export async function fetchUserClubs(userId: string): Promise<Club[]> {
+  const data = await apiRequest<unknown>(`/clubs/${userId}`);
+  return Array.isArray(data) ? (data as Club[]) : [];
+}
+
 export async function checkMembership(clubId: string, userId: string): Promise<MembershipStatus> {
   const data = await apiRequest<MembershipStatus>(`/clubs/${clubId}/members/${userId}`);
   return { isMember: data.isMember || false };
