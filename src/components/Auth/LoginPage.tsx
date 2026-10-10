@@ -1,11 +1,45 @@
 import { useState } from "react";
+import { CheckCircle2, Mail } from "lucide-react";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import Loading from "@/components/Common/Loading";
+import { useAuth } from "@/providers/AuthContext";
 import ParticleSystem from "./ParticleSystem";
 import { TabButton } from "../FormComponents/FormButtons";
 import Login from "./Login";
 import Register from "./Register";
 
 export default function LoginPage() {
-  const [isLogin, setIsLogin] = useState(true);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { user, loading } = useAuth();
+  const registration = location.state as
+    | {
+        registrationSuccess?: boolean;
+        confirmationRequired?: boolean;
+        email?: string;
+      }
+    | undefined;
+  const [isLogin, setIsLogin] = useState(location.pathname !== "/register");
+  const showLogin = registration?.registrationSuccess || isLogin;
+
+  const showSignUp = () => {
+    if (registration?.registrationSuccess) {
+      navigate("/login", { replace: true, state: null });
+    }
+    setIsLogin(false);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-950">
+        <Loading size="lg" />
+      </div>
+    );
+  }
+
+  if (user && !registration?.registrationSuccess) {
+    return <Navigate to="/discovery" replace />;
+  }
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-blue-900">
@@ -22,16 +56,37 @@ export default function LoginPage() {
             </p>
           </div>
 
+          {registration?.registrationSuccess && (
+            <div
+              role="status"
+              className="mb-6 flex gap-3 rounded-2xl border border-emerald-400/25 bg-emerald-400/10 p-4 text-emerald-100"
+            >
+              {registration.confirmationRequired ? (
+                <Mail className="mt-0.5 h-5 w-5 shrink-0 text-emerald-300" />
+              ) : (
+                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-300" />
+              )}
+              <div>
+                <p className="font-semibold">Account created successfully</p>
+                <p className="mt-1 text-sm text-emerald-100/75">
+                  {registration.confirmationRequired
+                    ? `Check ${registration.email ?? "your inbox"} to confirm your email, then sign in.`
+                    : "Your account is ready. Sign in to start discovering anime."}
+                </p>
+              </div>
+            </div>
+          )}
+
           <div className="mb-8 flex flex-col rounded-xl border border-white border-opacity-10 bg-white bg-opacity-5 p-1">
             <div className="flex">
-              <TabButton active={isLogin} onClick={() => setIsLogin(true)}>
+              <TabButton active={showLogin} onClick={() => setIsLogin(true)}>
                 Sign In
               </TabButton>
-              <TabButton active={!isLogin} onClick={() => setIsLogin(false)}>
+              <TabButton active={!showLogin} onClick={showSignUp}>
                 Sign Up
               </TabButton>
             </div>
-            {isLogin ? <Login /> : <Register />}
+            {showLogin ? <Login /> : <Register />}
           </div>
         </div>
       </div>

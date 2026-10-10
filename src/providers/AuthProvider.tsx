@@ -28,11 +28,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .from("Users")
         .select("*")
         .eq("id", currentUser.id)
-        .single();
+        .maybeSingle();
 
-      setProfile(
-        !error && data ? (data as UserProfile) : fallbackProfile(currentUser),
-      );
+      if (!error && data) {
+        setProfile(data as UserProfile);
+        return;
+      }
+
+      const fallback = fallbackProfile(currentUser);
+      setProfile(fallback);
+
+      if (!error) {
+        const { error: insertError } = await supabase.from("Users").insert({
+          id: fallback.id,
+          username: fallback.username,
+          email: fallback.email,
+        });
+        if (insertError) {
+          console.warn("Could not create user profile:", insertError.message);
+        }
+      }
     } catch (error) {
       console.warn("Could not fetch user profile:", error);
       setProfile(fallbackProfile(currentUser));
@@ -95,17 +110,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         options: { data: { username: username || email.split("@")[0] } },
       });
 
-      if (!error && data.user) {
-        const { error: insertError } = await supabase.from("Users").insert({
-          id: data.user.id,
-          username: username || email.split("@")[0],
-          email,
-        });
-        if (insertError)
-          console.warn("Could not insert to Users table:", insertError.message);
-      }
-
-      return { error };
+      return { error, confirmationRequired: !data.session };
     },
     [],
   );

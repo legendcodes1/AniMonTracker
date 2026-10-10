@@ -2,15 +2,19 @@ import { Plus } from "lucide-react";
 import { useClubs } from "@/hooks/useClubs";
 
 export default function ActiveClubs() {
-  const { clubs: clubData, loading } = useClubs();
+  const { clubs: clubData, loading, error } = useClubs();
 
   return (
-    <div className="bg-slate-800 rounded-2xl p-6 w-80">
+    <div className="w-full rounded-2xl border border-white/10 bg-slate-900/85 p-6 backdrop-blur">
       <h1 className="text-white font-bold mb-5">Active Clubs</h1>
 
       <div className="flex flex-col gap-4">
         {loading ? (
           <p className="text-slate-400">Loading...</p>
+        ) : error ? (
+          <p className="text-sm text-red-300">
+            Clubs are unavailable right now.
+          </p>
         ) : clubData.length === 0 ? (
           <p className="text-slate-400">Currently no Clubs have been created</p>
         ) : (

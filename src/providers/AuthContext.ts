@@ -12,7 +12,10 @@ export interface AuthContextValue {
     email: string,
     password: string,
     username?: string,
-  ) => Promise<{ error: Error | null }>;
+  ) => Promise<{
+    error: Error | null;
+    confirmationRequired: boolean;
+  }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
   getAccessToken: () => Promise<string | null>;

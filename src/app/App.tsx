@@ -1,5 +1,4 @@
 import { Route, Routes } from "react-router-dom";
-import Register from "../components/Auth/Register";
 import ProtectedRoute from "../components/Auth/ProtectedRoute";
 import LoginPage from "../components/Auth/LoginPage";
 import Clubs from "../components/Clubs/Clubs";
@@ -28,7 +27,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<LoginPage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/register" element={<LoginPage />} />
           <Route
             element={
               <ProtectedRoute>

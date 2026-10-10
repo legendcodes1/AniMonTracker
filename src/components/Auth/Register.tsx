@@ -1,12 +1,13 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/providers/AuthContext";
 import { SubmitButton } from "./SubmitButton";
 import { FormGroup } from "../FormComponents/FormGroup";
 
 export default function Register() {
   const navigate = useNavigate();
+  const { signUp } = useAuth();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
@@ -26,33 +27,31 @@ export default function Register() {
     setLoading(true);
 
     try {
-      const { data, error: signUpError } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: { data: { username: formData.username } },
-      });
+      const { error: signUpError, confirmationRequired } = await signUp(
+        formData.email,
+        formData.password,
+        formData.username,
+      );
 
       if (signUpError) {
         setError(signUpError.message);
         return;
       }
 
-      if (data.user) {
-        const { error: insertError } = await supabase.from("Users").insert([
-          {
-            id: data.user.id,
-            username: formData.username,
-            email: formData.email,
-          },
-        ]);
-
-        if (insertError) {
-          setError(insertError.message);
-          return;
-        }
-      }
-
-      navigate("/login");
+      navigate("/login", {
+        replace: true,
+        state: {
+          registrationSuccess: true,
+          confirmationRequired,
+          email: formData.email,
+        },
+      });
+    } catch (cause) {
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : "Registration failed. Please try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -88,7 +87,7 @@ export default function Register() {
 
       {error && <p className="mb-2 text-sm text-red-400">{error}</p>}
 
-      <SubmitButton loading={loading}>Register </SubmitButton>
+      <SubmitButton loading={loading}>Create account</SubmitButton>
     </form>
   );
 }

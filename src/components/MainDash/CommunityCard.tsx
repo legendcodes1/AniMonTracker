@@ -1,7 +1,7 @@
 import { Users } from "lucide-react";
 export default function CommunityCard() {
   return (
-    <div className="bg-slate-800 rounded-2xl p-6 w-80 mr-10">
+    <div className="w-full rounded-2xl border border-white/10 bg-slate-900/85 p-6 backdrop-blur">
       <div className="flex items-center gap-3 mb-6">
         <Users className="text-blue-500" />
         <div>
