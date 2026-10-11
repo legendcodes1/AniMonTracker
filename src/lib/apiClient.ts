@@ -124,5 +124,10 @@ export async function apiRequest<T = unknown>(
     return undefined as T;
   }
 
-  return (await response.json()) as T;
+  const responseText = await response.text();
+  if (!responseText) {
+    return undefined as T;
+  }
+
+  return JSON.parse(responseText) as T;
 }

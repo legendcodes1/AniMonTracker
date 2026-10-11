@@ -113,6 +113,7 @@ export default function Clubs() {
                     description={club.description}
                     image={club.group_avatar_url}
                     badge={club.memberCount}
+                    creatorId={club.creator_id}
                   />
                 ))}
               </div>

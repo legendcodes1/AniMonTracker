@@ -21,6 +21,16 @@ export interface CreateClubRequest {
 
 export interface MembershipStatus {
   isMember: boolean;
+  canJoin: boolean;
+  reason?: string;
+}
+
+export interface ClubMember {
+  id: string;
+  username: string;
+  avatar_url?: string | null;
+  role: string;
+  joined_at?: string | null;
 }
 
 const requireBaseUrl = (): void => {
@@ -104,7 +114,21 @@ export async function checkMembership(
   const data = await apiRequest<MembershipStatus>(
     `/clubs/${clubId}/members/${userId}`,
   );
-  return { isMember: data.isMember || false };
+  return {
+    isMember: data.isMember === true,
+    canJoin: data.canJoin === true,
+    reason: data.reason,
+  };
+}
+
+export async function fetchClubMembers(clubId: string): Promise<ClubMember[]> {
+  const data = await apiRequest<unknown>(`/clubs/${clubId}/members`);
+
+  if (!Array.isArray(data)) {
+    throw new Error("Club members endpoint returned an unexpected response");
+  }
+
+  return data as ClubMember[];
 }
 
 export async function joinClub(clubId: string, userId: string): Promise<void> {

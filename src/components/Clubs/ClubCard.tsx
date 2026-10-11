@@ -1,8 +1,10 @@
+import { useEffect, useState } from "react";
 import type { MouseEvent } from "react";
 import Loading from "../Common/Loading";
 import { useNavigate } from "react-router-dom";
 import { Users, TrendingUp, UserPlus, Check } from "lucide-react";
 import { useClubMembership } from "@/hooks/useClubMembership";
+import { useAuth } from "@/providers/AuthContext";
 
 interface ClubCardProps {
   id: string;
@@ -10,6 +12,7 @@ interface ClubCardProps {
   badge: number | string;
   title: string;
   description: string;
+  creatorId?: string;
 }
 
 export default function ClubCard({
@@ -18,19 +21,35 @@ export default function ClubCard({
   badge,
   title,
   description,
+  creatorId,
 }: ClubCardProps) {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const {
     isMember,
+    canJoin,
+    reason,
+    error: membershipError,
     checking: checkingMembership,
     joining,
     join,
   } = useClubMembership(id);
+  const initialMemberCount =
+    typeof badge === "number" ? badge : parseInt(badge) || 0;
+  const [memberCount, setMemberCount] = useState(initialMemberCount);
+  const isCreator = creatorId === user?.id;
+  const hasJoined = isCreator || isMember;
+
+  useEffect(() => {
+    setMemberCount(initialMemberCount);
+  }, [initialMemberCount]);
 
   const handleJoinClub = async (e: MouseEvent) => {
     e.stopPropagation();
     try {
-      await join();
+      const joined = await join();
+      if (!joined) return;
+      setMemberCount((count) => count + 1);
     } catch (error) {
       console.error("Error joining group:", error);
       alert(error instanceof Error ? error.message : "Failed to join group");
@@ -41,7 +60,6 @@ export default function ClubCard({
     navigate(`/clubs/${id}`);
   };
 
-  const memberCount = typeof badge === "number" ? badge : parseInt(badge) || 0;
   const activityLevel =
     memberCount > 50 ? "Active" : memberCount > 10 ? "Growing" : "New";
 
@@ -90,55 +108,59 @@ export default function ClubCard({
         </p>
 
         <div className="flex items-center justify-between pt-4 border-t border-slate-700/50">
-          <div className="flex -space-x-2">
-            {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className="w-8 h-8 rounded-full border-2 border-slate-800 bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center text-xs text-slate-300"
-              >
-                {String.fromCharCode(64 + i)}
-              </div>
-            ))}
-            {memberCount > 3 && (
-              <div className="w-8 h-8 rounded-full border-2 border-slate-800 bg-slate-900 flex items-center justify-center text-xs text-slate-400">
-                +{memberCount - 3}
-              </div>
-            )}
+          <div className="flex items-center gap-2 text-xs text-slate-400">
+            <Users className="w-4 h-4" />
+            {memberCount.toLocaleString()}{" "}
+            {memberCount === 1 ? "member" : "members"}
           </div>
 
-          {checkingMembership ? (
+          {checkingMembership && !isCreator ? (
             <Loading variant="skeleton" size="sm" className="w-24 h-9" />
           ) : (
             <button
               className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300
                 ${
-                  isMember
+                  hasJoined
                     ? "bg-green-500/20 text-green-400 border border-green-500/30"
-                    : "bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 border border-purple-500/20 hover:border-purple-500/40"
+                    : canJoin && !membershipError
+                      ? "bg-purple-500/10 hover:bg-purple-500/20 text-purple-400 border border-purple-500/20 hover:border-purple-500/40"
+                      : "bg-slate-700/50 text-slate-400 border border-slate-600/40"
                 }
                 ${joining ? "opacity-70 cursor-wait" : ""}`}
               onClick={handleJoinClub}
-              disabled={isMember || joining}
+              disabled={
+                hasJoined || !canJoin || Boolean(membershipError) || joining
+              }
+              title={membershipError || reason || undefined}
             >
-              {isMember ? (
+              {hasJoined ? (
                 <>
                   <Check className="w-4 h-4" />
-                  Joined
+                  {isCreator ? "Owner" : "Joined"}
                 </>
               ) : joining ? (
                 <>
                   <Loading variant="spinner" size="sm" className="w-4 h-4" />
                   Joining...
                 </>
-              ) : (
+              ) : canJoin && !membershipError ? (
                 <>
                   <UserPlus className="w-4 h-4" />
                   Join
                 </>
+              ) : (
+                "Can't join"
               )}
             </button>
           )}
         </div>
+        {!checkingMembership && !hasJoined && (membershipError || reason) && (
+          <p className="mt-3 text-xs text-amber-300" role="status">
+            {membershipError
+              ? "Membership status is unavailable. Try again later."
+              : reason}
+          </p>
+        )}
       </div>
     </div>
   );

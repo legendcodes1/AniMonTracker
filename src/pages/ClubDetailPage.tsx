@@ -20,6 +20,41 @@ import { fetchClubById } from "@/services/clubService";
 import type { Club } from "@/services/clubService";
 import { useAuth } from "@/providers/AuthContext";
 import { useClubMembership } from "@/hooks/useClubMembership";
+import { useClubMembers } from "@/hooks/useClubMembers";
+import type { ClubMember } from "@/services/clubService";
+
+function formatJoinedDate(joinedAt?: string | null) {
+  if (!joinedAt) return "Join date unavailable";
+
+  const date = new Date(joinedAt);
+  if (Number.isNaN(date.getTime())) return "Join date unavailable";
+
+  return `Joined ${new Intl.DateTimeFormat(undefined, {
+    month: "short",
+    year: "numeric",
+  }).format(date)}`;
+}
+
+function MemberAvatar({ member, size }: { member: ClubMember; size: string }) {
+  if (member.avatar_url) {
+    return (
+      <img
+        src={member.avatar_url}
+        alt={`${member.username}'s avatar`}
+        className={`${size} rounded-full object-cover bg-slate-700`}
+      />
+    );
+  }
+
+  return (
+    <div
+      className={`${size} rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center font-bold text-white`}
+      aria-hidden="true"
+    >
+      {member.username.charAt(0).toUpperCase() || "U"}
+    </div>
+  );
+}
 
 export default function ClubDetailPage() {
   const { id } = useParams();
@@ -33,11 +68,21 @@ export default function ClubDetailPage() {
   const { user } = useAuth();
   const {
     isMember,
+    canJoin,
+    reason: membershipReason,
+    error: membershipError,
     checking: checkingMembership,
     joining,
+    leaving,
     join,
     leave,
   } = useClubMembership(id, Boolean(club));
+  const {
+    members,
+    loading: membersLoading,
+    error: membersError,
+    refresh: refreshMembers,
+  } = useClubMembers(id, Boolean(club));
 
   useEffect(() => {
     let active = true;
@@ -71,7 +116,14 @@ export default function ClubDetailPage() {
 
   const handleJoinClub = async () => {
     try {
-      await join();
+      const joined = await join();
+      if (!joined) return;
+      setClub((current) =>
+        current
+          ? { ...current, memberCount: Math.max(0, current.memberCount) + 1 }
+          : current,
+      );
+      await refreshMembers();
     } catch (error) {
       console.error("Error joining group:", error);
       alert(error instanceof Error ? error.message : "Failed to join group");
@@ -82,11 +134,17 @@ export default function ClubDetailPage() {
     if (!confirm("Are you sure you want to leave this club?")) return;
 
     try {
-      await leave();
+      const left = await leave();
+      if (!left) return;
+      setClub((current) =>
+        current
+          ? { ...current, memberCount: Math.max(0, current.memberCount - 1) }
+          : current,
+      );
       window.location.href = "/clubs";
     } catch (error) {
       console.error("Error leaving club:", error);
-      alert("Failed to leave club");
+      alert(error instanceof Error ? error.message : "Failed to leave club");
     }
   };
 
@@ -151,49 +209,6 @@ export default function ClubDetailPage() {
       replies: 8,
       likes: 15,
       time: "2d ago",
-    },
-  ];
-
-  const mockMembers = [
-    {
-      id: 1,
-      name: club.creator_id || "Admin",
-      role: "Admin",
-      avatar: "A",
-      joined: "Jan 2024",
-      online: true,
-    },
-    {
-      id: 2,
-      name: "AnimeFan92",
-      role: "Moderator",
-      avatar: "F",
-      joined: "Feb 2024",
-      online: true,
-    },
-    {
-      id: 3,
-      name: "MangaReader",
-      role: "Member",
-      avatar: "M",
-      joined: "Mar 2024",
-      online: false,
-    },
-    {
-      id: 4,
-      name: "OtakuKing",
-      role: "Member",
-      avatar: "O",
-      joined: "Apr 2024",
-      online: true,
-    },
-    {
-      id: 5,
-      name: "NostalgiaUser",
-      role: "Member",
-      avatar: "N",
-      joined: "May 2024",
-      online: false,
     },
   ];
 
@@ -279,12 +294,26 @@ export default function ClubDetailPage() {
                     </button>
                     <button
                       onClick={handleLeaveClub}
-                      className="bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 px-4 py-3 rounded-xl font-bold text-red-400 flex items-center gap-2 transition-all"
+                      disabled={leaving}
+                      className="bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 px-4 py-3 rounded-xl font-bold text-red-400 flex items-center gap-2 transition-all disabled:cursor-wait disabled:opacity-70"
+                      title="Leave club"
                     >
-                      <LogOut size={18} />
+                      {leaving ? (
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                      ) : (
+                        <LogOut size={18} />
+                      )}
                     </button>
                   </div>
-                ) : (
+                ) : membershipError ? (
+                  <button
+                    disabled
+                    title={membershipError}
+                    className="bg-slate-700 px-6 py-3 rounded-xl font-bold text-slate-300"
+                  >
+                    Status unavailable
+                  </button>
+                ) : canJoin ? (
                   <button
                     onClick={handleJoinClub}
                     disabled={joining}
@@ -296,6 +325,14 @@ export default function ClubDetailPage() {
                       <UserPlus className="w-5 h-5" />
                     )}
                     {joining ? "Joining..." : "Join Club"}
+                  </button>
+                ) : (
+                  <button
+                    disabled
+                    title={membershipReason || undefined}
+                    className="bg-slate-700 px-6 py-3 rounded-xl font-bold text-slate-300"
+                  >
+                    Can't join
                   </button>
                 )}
                 <Link
@@ -424,42 +461,56 @@ export default function ClubDetailPage() {
               </>
             )}
 
-            {activeTab === "members" && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {mockMembers.map((member) => (
-                  <div
-                    key={member.id}
-                    className="bg-slate-800/40 backdrop-blur-sm rounded-2xl p-5 border border-white/5 hover:border-purple-500/20 transition-all"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="relative">
-                        <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-xl font-bold text-white">
-                          {member.avatar}
+            {activeTab === "members" &&
+              (membersLoading ? (
+                <div className="flex justify-center py-12">
+                  <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
+                </div>
+              ) : membersError ? (
+                <div className="rounded-2xl border border-red-500/20 bg-red-500/10 p-6 text-red-300">
+                  Members are unavailable right now.
+                </div>
+              ) : members.length === 0 ? (
+                <div className="rounded-2xl border border-white/5 bg-slate-800/40 p-8 text-center text-slate-400">
+                  This club does not have any members yet.
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {members.map((member) => {
+                    const normalizedRole = member.role.toLowerCase();
+                    return (
+                      <div
+                        key={member.id}
+                        className="bg-slate-800/40 backdrop-blur-sm rounded-2xl p-5 border border-white/5 hover:border-purple-500/20 transition-all"
+                      >
+                        <div className="flex items-center gap-4">
+                          <MemberAvatar
+                            member={member}
+                            size="w-14 h-14 text-xl"
+                          />
+                          <div className="flex-1">
+                            <h4 className="font-bold text-white flex items-center gap-2">
+                              {member.username}
+                              {normalizedRole === "admin" && (
+                                <Crown className="w-4 h-4 text-yellow-400" />
+                              )}
+                              {normalizedRole === "moderator" && (
+                                <Settings className="w-4 h-4 text-blue-400" />
+                              )}
+                            </h4>
+                            <p className="text-sm text-slate-400">
+                              {member.role}
+                            </p>
+                            <p className="text-xs text-slate-500 mt-1">
+                              {formatJoinedDate(member.joined_at)}
+                            </p>
+                          </div>
                         </div>
-                        {member.online && (
-                          <span className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 rounded-full border-2 border-slate-900" />
-                        )}
                       </div>
-                      <div className="flex-1">
-                        <h4 className="font-bold text-white flex items-center gap-2">
-                          {member.name}
-                          {member.role === "Admin" && (
-                            <Crown className="w-4 h-4 text-yellow-400" />
-                          )}
-                          {member.role === "Moderator" && (
-                            <Settings className="w-4 h-4 text-blue-400" />
-                          )}
-                        </h4>
-                        <p className="text-sm text-slate-400">{member.role}</p>
-                        <p className="text-xs text-slate-500 mt-1">
-                          Joined {member.joined}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+                    );
+                  })}
+                </div>
+              ))}
 
             {activeTab === "about" && (
               <div className="bg-slate-800/40 backdrop-blur-sm rounded-2xl p-6 border border-white/5">
@@ -497,44 +548,56 @@ export default function ClubDetailPage() {
                 Recent Members
               </h3>
               <div className="space-y-3">
-                {mockMembers.slice(0, 5).map((member) => (
-                  <div
-                    key={member.id}
-                    className="flex items-center gap-3 group"
-                  >
-                    <div className="relative">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center text-sm font-bold text-slate-300">
-                        {member.avatar}
-                      </div>
-                      {member.online && (
-                        <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-slate-900" />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-white truncate">
-                        {member.name}
-                      </p>
-                      <p className="text-xs text-slate-500">{member.role}</p>
-                    </div>
+                {membersLoading ? (
+                  <div className="flex justify-center py-4">
+                    <Loader2 className="w-6 h-6 animate-spin text-purple-500" />
                   </div>
-                ))}
+                ) : membersError ? (
+                  <p className="text-sm text-red-300">
+                    Members are unavailable.
+                  </p>
+                ) : members.length === 0 ? (
+                  <p className="text-sm text-slate-400">No members yet.</p>
+                ) : (
+                  members.slice(0, 5).map((member) => (
+                    <div
+                      key={member.id}
+                      className="flex items-center gap-3 group"
+                    >
+                      <MemberAvatar member={member} size="w-10 h-10 text-sm" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-white truncate">
+                          {member.username}
+                        </p>
+                        <p className="text-xs text-slate-500">{member.role}</p>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
 
-            {!isMember && !isAdmin && (
+            {!isMember && !isAdmin && !checkingMembership && (
               <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-2xl p-6 border border-purple-500/20">
-                <h3 className="font-bold text-lg mb-2">Join this Club</h3>
+                <h3 className="font-bold text-lg mb-2">
+                  {canJoin ? "Join this Club" : "Membership unavailable"}
+                </h3>
                 <p className="text-slate-400 text-sm mb-4">
-                  Connect with {club.memberCount || 0} members and participate
-                  in discussions!
+                  {membershipError
+                    ? "We couldn't check whether you can join. Try again later."
+                    : canJoin
+                      ? `Connect with ${club.memberCount || 0} members and participate in discussions!`
+                      : membershipReason || "You cannot join this club."}
                 </p>
-                <button
-                  onClick={handleJoinClub}
-                  disabled={joining}
-                  className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-bold hover:shadow-lg transition-all disabled:cursor-wait disabled:opacity-70"
-                >
-                  {joining ? "Joining..." : "Join Now"}
-                </button>
+                {canJoin && !membershipError && (
+                  <button
+                    onClick={handleJoinClub}
+                    disabled={joining}
+                    className="w-full py-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl font-bold hover:shadow-lg transition-all disabled:cursor-wait disabled:opacity-70"
+                  >
+                    {joining ? "Joining..." : "Join Now"}
+                  </button>
+                )}
               </div>
             )}
           </div>
